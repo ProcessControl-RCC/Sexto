@@ -12,7 +12,7 @@
 :root{
   --bg:#e9ece9; --panel:#fbfcfa; --ink:#1f2a2b; --muted:#5d6a6b; --line:#d3dbd9;
   --accent:#0c6a88; --accent-ink:#ffffff;
-  --t-relleu:#9d6417; --t-rius:#2f6fb4; --t-musculs:#b8526a;
+  --t-relleu:#9d6417; --t-rius:#2f6fb4; --t-musculs:#b8526a; --t-energia:#a87400;
   --f-display:"Bricolage Grotesque",system-ui,sans-serif;
   --f-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
   color-scheme:light;
@@ -20,11 +20,11 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#111618; --panel:#182023; --ink:#e6eded; --muted:#9fb0b2; --line:#2b383c;
   --accent:#5fc3e3; --accent-ink:#06222c;
-  --t-relleu:#e2a64c; --t-rius:#6fb7f2; --t-musculs:#d77a91; color-scheme:dark}}
+  --t-relleu:#e2a64c; --t-rius:#6fb7f2; --t-musculs:#d77a91; --t-energia:#f0c94a; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#111618; --panel:#182023; --ink:#e6eded; --muted:#9fb0b2; --line:#2b383c;
   --accent:#5fc3e3; --accent-ink:#06222c;
-  --t-relleu:#e2a64c; --t-rius:#6fb7f2; --t-musculs:#d77a91; color-scheme:dark}
+  --t-relleu:#e2a64c; --t-rius:#6fb7f2; --t-musculs:#d77a91; --t-energia:#f0c94a; color-scheme:dark}
 
 *{box-sizing:border-box}
 html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -35,7 +35,9 @@ header{display:flex;flex-direction:column;gap:6px}
 h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(34px,6vw,54px);line-height:1;letter-spacing:-.02em;text-wrap:balance}
 header p{margin:6px 0 0;color:var(--muted);max-width:60ch}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:960px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.grid{grid-template-columns:1fr}}
 .card{display:flex;flex-direction:column;gap:14px;padding:20px;border-radius:16px;background:var(--panel);border:1px solid var(--line);color:inherit;text-decoration:none;transition:border-color .15s,transform .15s}
 .card:hover{border-color:var(--c);transform:translateY(-2px)}
 .card:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
@@ -90,6 +92,17 @@ footer{color:var(--muted);font-size:13px}
       <h2>Sistema muscular</h2>
       <p>Els músculs del cos, de davant i de darrere, i per a què serveix cada un.</p>
       <div class="tags"><span>14 músculs</span><span>Cos humà</span></div>
+      <span class="go">Obre el tema →</span>
+    </a>
+
+    <a class="card" href="EmergiaCircuits/" style="--c:var(--t-energia)">
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 240 120"><path d="M60 30 H180 V90 H60 Z" fill="none" stroke="var(--c)" stroke-width="4" stroke-linejoin="round"/><path d="M52 52 V68 M68 46 V74" stroke="var(--c)" stroke-width="5"/><rect x="50" y="48" width="20" height="24" fill="color-mix(in srgb,var(--c) 12%,var(--panel))"/><path d="M54 50 V70 M64 44 V76" stroke="var(--c)" stroke-width="5"/><circle cx="120" cy="30" r="14" fill="color-mix(in srgb,var(--c) 12%,var(--panel))" stroke="var(--c)" stroke-width="4"/><path d="M110 20 L130 40 M130 20 L110 40" stroke="var(--c)" stroke-width="3"/><path d="M168 90 L190 76" stroke="var(--c)" stroke-width="4" stroke-linecap="round"/><rect x="150" y="84" width="24" height="12" fill="color-mix(in srgb,var(--c) 12%,var(--panel))"/><path d="M150 90 H158 L176 78" fill="none" stroke="var(--c)" stroke-width="4" stroke-linecap="round"/><circle cx="158" cy="90" r="3.5" fill="var(--c)"/></svg>
+      </div>
+      <span class="subj">Medi · Tema 6</span>
+      <h2>Energia i circuits</h2>
+      <p>Formes i fonts d’energia, centrals elèctriques, ús sostenible i circuits elèctrics.</p>
+      <div class="tags"><span>Apunts</span><span>Exercicis</span><span>Simulacre d’examen</span></div>
       <span class="go">Obre el tema →</span>
     </a>
   </section>

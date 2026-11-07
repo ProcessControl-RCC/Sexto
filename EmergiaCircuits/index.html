@@ -1,0 +1,1034 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Energia i circuits 6è</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Lexend:wght@300;400;500;600&display=swap">
+<style>
+/* Layout: quadern d'esquemes — paper quadriculat, tinta blava i coure dels cables; una columna central amb pestanyes. */
+:root{
+  --paper:#F4F6FA; --grid:rgba(27,37,71,.055); --card:#FFFFFF; --ink:#1B2547; --muted:#5B6584; --line:#D6DCE8;
+  --copper:#B8571F; --copper-soft:#F7E4D7; --lit:#FFCF33; --ok:#1E8048; --ok-soft:#DCF2E4; --bad:#BE3434; --bad-soft:#F8DEDE;
+  --wire:#1B2547; --chip:#E8ECF5;
+  --f-display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Lexend","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#11162A; --grid:rgba(201,210,234,.045); --card:#1A2138; --ink:#E6EAF5; --muted:#9AA3C0; --line:#2D3756;
+  --copper:#EE9256; --copper-soft:#3B2A20; --lit:#FFD23F; --ok:#4CC27E; --ok-soft:#173A28; --bad:#F27777; --bad-soft:#3F1F24;
+  --wire:#C9D2EA; --chip:#242C47; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#11162A; --grid:rgba(201,210,234,.045); --card:#1A2138; --ink:#E6EAF5; --muted:#9AA3C0; --line:#2D3756;
+  --copper:#EE9256; --copper-soft:#3B2A20; --lit:#FFD23F; --ok:#4CC27E; --ok-soft:#173A28; --bad:#F27777; --bad-soft:#3F1F24;
+  --wire:#C9D2EA; --chip:#242C47; color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font:400 16px/1.6 var(--f-body)}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+h1,h2,h3{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,6vw,3rem);font-weight:700}
+h2{font-size:1.6rem;font-weight:600}
+h3{font-size:1.2rem;font-weight:600}
+p{margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--copper);outline-offset:2px}
+
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--card)}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+.top .wrap{padding-block:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-weight:700;font-size:1.15rem;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink)}
+.brand svg{width:26px;height:26px}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+nav.tabs a{padding:6px 12px;border-radius:999px;text-decoration:none;color:var(--muted);font-weight:500;font-size:.95rem}
+nav.tabs a:hover{color:var(--ink);background:var(--chip)}
+nav.tabs a.on{background:var(--ink);color:var(--card)}
+
+.view{padding-top:28px;display:flex;flex-direction:column;gap:22px}
+.eyebrow{text-transform:uppercase;letter-spacing:.09em;font-size:.75rem;font-weight:600;color:var(--copper)}
+.lede{color:var(--muted);max-width:60ch}
+.hero{display:flex;flex-direction:column;gap:10px;padding-block:8px}
+
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.go{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;transition:border-color .15s,transform .15s}
+.go:hover{border-color:var(--copper);transform:translateY(-2px)}
+.go b{font-family:var(--f-display);font-size:1.2rem;font-weight:600}
+.go span{color:var(--muted);font-size:.93rem}
+
+.prog{display:flex;flex-direction:column;gap:10px}
+.prow{display:grid;grid-template-columns:minmax(0,1fr) 120px 52px;gap:10px;align-items:center;font-size:.93rem}
+.bar{height:10px;border-radius:99px;background:var(--chip);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--copper);border-radius:99px;transition:width .3s}
+.prow .num{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+
+.warn{background:var(--copper-soft);border:1px solid color-mix(in srgb,var(--copper) 35%,transparent);border-radius:14px;padding:18px 20px}
+.warn ul{margin:10px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+
+/* Apunts */
+.toc{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:.92rem;text-decoration:none;color:var(--ink);display:inline-flex;gap:8px;align-items:center}
+.chip:hover{border-color:var(--copper)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--card)}
+.chip small{font-variant-numeric:tabular-nums;opacity:.75}
+.notes{display:flex;flex-direction:column;gap:14px}
+.notes section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.notes ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.notes .pg{font-size:.8rem;color:var(--muted);font-weight:500}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.kv div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.93rem}
+.kv b{display:block;color:var(--copper);font-weight:600}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.9rem}
+.chain span{padding:4px 10px;border-radius:8px;background:var(--chip)}
+.chain span.k{background:var(--copper-soft);font-weight:600}
+.chain em{font-style:normal;color:var(--muted)}
+.syms{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.syms div{border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center;font-size:.88rem}
+.syms svg{width:90px;height:50px;display:block;margin:0 auto}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.pair figure{margin:0;border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.pair figcaption{font-size:.9rem}
+.practice{align-self:flex-start}
+
+/* Preguntes */
+.qlist{display:flex;flex-direction:column;gap:16px}
+.q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.qh{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.qn{font-family:var(--f-display);font-weight:600;background:var(--ink);color:var(--card);border-radius:8px;min-width:30px;height:30px;display:grid;place-items:center;padding:0 6px;font-variant-numeric:tabular-nums}
+.qt{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.done{margin-left:auto;font-size:.78rem;font-weight:600;color:var(--ok);background:var(--ok-soft);border-radius:99px;padding:2px 10px}
+.qq{font-weight:500;font-size:1.05rem}
+.fig{overflow-x:auto}
+.fig svg{max-width:100%;height:auto;display:block;margin:0 auto}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opts.figopts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.opt{text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:10px 14px;cursor:pointer;line-height:1.4}
+.opt:hover:not(:disabled){border-color:var(--copper)}
+.opt.sel{border-color:var(--ink);background:var(--chip)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt:disabled{cursor:default}
+.opt svg{width:100%;height:auto;display:block}
+.opt .ol{font-weight:600;font-size:.85rem;color:var(--muted)}
+.tf{display:flex;gap:10px}
+.tf .opt{flex:1;text-align:center;font-weight:600}
+.rows{display:flex;flex-direction:column;gap:8px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:center;border-bottom:1px dashed var(--line);padding-bottom:8px}
+.row:last-child{border-bottom:0}
+.rl svg{width:90px;height:46px;display:block}
+select{font:inherit;font-size:.95rem;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:8px;padding:6px 8px;max-width:100%;width:100%}
+select.right{border-color:var(--ok);background:var(--ok-soft)}
+select.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.sol{display:block;font-size:.85rem;color:var(--ok);font-weight:500;margin-top:3px}
+.filltext{line-height:2.4}
+.filltext select{width:auto;display:inline-block;padding:3px 6px;margin:0 2px}
+.bank{display:flex;flex-wrap:wrap;gap:6px;font-size:.85rem;color:var(--muted);align-items:center}
+.bank span{border:1px dashed var(--line);border-radius:6px;padding:1px 8px;color:var(--ink)}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px dashed var(--line);padding-bottom:8px}
+.srow:last-child{border-bottom:0}
+.srow > span{font-weight:500}
+.seg{display:flex;gap:4px;flex-wrap:wrap}
+.seg button{border:1.5px solid var(--line);background:var(--card);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:.88rem}
+.seg button.sel{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.seg button.right{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.seg button.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--ink)}
+ol.ord{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+ol.ord li{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px}
+ol.ord li.right{border-color:var(--ok);background:var(--ok-soft)}
+ol.ord li.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.pos{font-family:var(--f-display);font-weight:600;color:var(--copper);min-width:18px}
+.ot{flex:1;min-width:0}
+.mv{display:flex;gap:4px}
+.mv button{border:1px solid var(--line);background:var(--chip);border-radius:6px;width:32px;height:30px;cursor:pointer;font-size:.8rem}
+.mv button:disabled{opacity:.35;cursor:default}
+.multi label{display:flex;gap:10px;align-items:center;border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer}
+.multi{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.multi label.right{border-color:var(--ok);background:var(--ok-soft)}
+.multi label.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.multi input{width:18px;height:18px;accent-color:var(--copper)}
+.tbl{overflow-x:auto}
+.tbl table{border-collapse:collapse;width:100%;min-width:300px;font-size:.93rem}
+.tbl th,.tbl td{border:1px solid var(--line);padding:6px 8px;text-align:left}
+.tbl th{background:var(--chip);font-weight:600}
+textarea{width:100%;min-height:110px;font:inherit;font-size:.95rem;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;resize:vertical}
+.wc{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.wc.good{color:var(--ok);font-weight:600}
+.model{border-left:4px solid var(--copper);background:var(--copper-soft);border-radius:0 10px 10px 0;padding:10px 14px;font-size:.95rem}
+.model b{display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--copper);margin-bottom:4px}
+.self{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:.92rem}
+.fb{border-radius:10px;padding:10px 14px;font-size:.95rem;display:flex;flex-direction:column;gap:4px}
+.fb.ok{background:var(--ok-soft);border:1px solid var(--ok)}
+.fb.part{background:var(--copper-soft);border:1px solid var(--copper)}
+.fb.bad{background:var(--bad-soft);border:1px solid var(--bad)}
+.fb strong{font-weight:600}
+.qa{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1.5px solid var(--ink);background:var(--card);border-radius:10px;padding:8px 16px;cursor:pointer;font-weight:500}
+.btn.primary{background:var(--ink);color:var(--card)}
+.btn.primary:hover{background:var(--copper);border-color:var(--copper)}
+.btn.ghost{border-color:var(--line)}
+.btn.small{padding:5px 12px;font-size:.88rem}
+
+/* Laboratori */
+.lab{display:flex;flex-direction:column;gap:14px}
+.labfig{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;overflow-x:auto}
+.labfig svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.status{font-weight:600;padding:10px 14px;border-radius:10px}
+.status.on{background:var(--ok-soft);color:var(--ink)}
+.status.off{background:var(--bad-soft);color:var(--ink)}
+.hint{font-size:.9rem;color:var(--muted)}
+
+/* Circuits SVG */
+.wire{stroke:var(--wire);stroke-width:2.2;fill:none;stroke-linecap:round}
+.mask{fill:var(--card)}
+.sym{stroke:var(--wire);stroke-width:2.2;fill:none;stroke-linecap:round}
+.dot{fill:var(--wire)}
+.bulb{fill:var(--card);stroke:var(--wire);stroke-width:2.2}
+.bulb.on{fill:var(--lit)}
+.glow{fill:var(--lit);opacity:.35}
+.socket{fill:none;stroke:var(--muted);stroke-width:1.6;stroke-dasharray:3 3}
+.motor{fill:var(--card);stroke:var(--wire);stroke-width:2.2}
+.motor.on{fill:var(--copper-soft)}
+.mtext{fill:var(--wire);font:600 14px var(--f-body);text-anchor:middle;dominant-baseline:central}
+.spin{fill:none;stroke:var(--copper);stroke-width:2.5;stroke-dasharray:7 6;transform-box:fill-box;transform-origin:center;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.bthin{stroke:var(--wire);stroke-width:2.2}
+.bthick{stroke:var(--wire);stroke-width:5}
+.dead .bthin,.dead .bthick{stroke:var(--muted);stroke-dasharray:3 2}
+.lbl{fill:var(--muted);font:600 12px var(--f-body);text-anchor:middle}
+.plus{fill:var(--wire);font:600 12px var(--f-body);text-anchor:middle}
+.deadlbl{fill:var(--bad);font:600 11px var(--f-body);text-anchor:middle}
+.el.click{cursor:pointer}
+.el.click:hover .mask{fill:var(--chip)}
+
+/* Gràfic */
+.chart text{fill:var(--ink);font:400 12px var(--f-body)}
+.chart .cv{fill:var(--muted);font-variant-numeric:tabular-nums}
+.chart rect.b{fill:var(--copper)}
+.chart rect.t{fill:var(--chip)}
+
+.result{text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center}
+.score{font-family:var(--f-display);font-size:3.2rem;font-weight:700;color:var(--copper);font-variant-numeric:tabular-nums;line-height:1}
+.foot{color:var(--muted);font-size:.85rem;text-align:center;padding-top:10px}
+@media (max-width:520px){
+  .row{grid-template-columns:1fr}
+  .prow{grid-template-columns:minmax(0,1fr) 70px 44px}
+  nav.tabs{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}.go{transition:none}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#inici">
+      <svg viewBox="-16 -16 32 32" aria-hidden="true"><circle r="12" fill="var(--lit)" stroke="var(--wire)" stroke-width="2.2"/><path d="M-8,-8 L8,8 M8,-8 L-8,8" stroke="var(--wire)" stroke-width="2.2"/></svg>
+      Energia i circuits
+    </a>
+    <nav class="tabs" aria-label="Seccions">
+      <a href="#inici" data-v="inici">Inici</a>
+      <a href="#apunts" data-v="apunts">Apunts</a>
+      <a href="#exercicis" data-v="exercicis">Exercicis</a>
+      <a href="#laboratori" data-v="laboratori">Laboratori</a>
+      <a href="#examen" data-v="examen">Simulacre</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- INICI -->
+  <section class="view" id="v-inici">
+    <div class="hero">
+      <span class="eyebrow">Coneixement del Medi · 6è de Primària · Tema 6</span>
+      <h1>Energia i circuits</h1>
+      <p class="lede">Repàs per al control: l'energia, les fonts i les centrals, l'ús sostenible i els circuits elèctrics. Llegeix els apunts, practica per temes, juga amb els circuits i fes un simulacre d'examen.</p>
+    </div>
+    <div class="grid2">
+      <a class="go" href="#apunts"><b>Apunts</b><span>El resum del llibre (p. 108–121), tema per tema.</span></a>
+      <a class="go" href="#exercicis"><b>Exercicis</b><span>Preguntes com les dels fulls de classe, amb correcció.</span></a>
+      <a class="go" href="#laboratori"><b>Laboratori</b><span>Treu bombetes i obre interruptors per veure què passa.</span></a>
+      <a class="go" href="#examen"><b>Simulacre</b><span>12 preguntes barrejades i una nota sobre 10.</span></a>
+    </div>
+    <div class="panel">
+      <h3>El teu progrés</h3>
+      <p class="hint" style="margin:4px 0 14px">Preguntes encertades del tot a cada tema. Es guarda en aquest navegador.</p>
+      <div class="prog" id="prog"></div>
+      <div style="margin-top:14px"><button class="btn ghost small" id="resetProg">Esborra el progrés</button><span id="resetAsk" hidden> Segur? <button class="btn small" id="resetYes">Sí, esborra'l</button> <button class="btn ghost small" id="resetNo">No</button></span></div>
+    </div>
+    <div class="warn">
+      <h3>Vigila! Errors que surten sovint</h3>
+      <ul>
+        <li>Una <b>bombeta encesa</b> té energia <b>lluminosa</b> (i una mica de tèrmica). L'electricitat és la que hi entra, no la que dona.</li>
+        <li>Les <b>aspes d'un ventilador que giren</b> tenen energia <b>mecànica</b> (moviment).</li>
+        <li>Una <b>pilota que es mou</b> té energia <b>mecànica</b>. La <b>gasolina</b> té energia <b>química</b>.</li>
+        <li>Central <b>hidroelèctrica</b> → aigua en moviment. Central <b>nuclear</b> → urani.</li>
+        <li>Si et demanen un <b>interruptor general</b>, l'has de dibuixar al <b>tram comú</b> (on hi ha la pila), no dins d'una branca.</li>
+        <li>Un combustible de <b>biomassa</b> contamina <b>menys</b>, però <b>no és impacte zero</b>: quan es crema també treu CO₂, i fabricar-lo i transportar-lo també gasta energia.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- APUNTS -->
+  <section class="view" id="v-apunts" hidden>
+    <div class="hero">
+      <span class="eyebrow">Resum del llibre</span>
+      <h2>Apunts</h2>
+      <p class="lede">El més important de cada apartat del guió. Al final de cada tema hi ha un botó per practicar-lo.</p>
+    </div>
+    <nav class="toc" id="toc"></nav>
+    <div class="notes" id="notes"></div>
+  </section>
+
+  <!-- EXERCICIS -->
+  <section class="view" id="v-exercicis" hidden>
+    <div class="hero">
+      <span class="eyebrow">Practica per temes</span>
+      <h2>Exercicis</h2>
+      <p class="lede">Respon i prem <b>Comprova</b>. Les preguntes llargues no es corregeixen soles: escriu la teva resposta i després compara-la amb la resposta model.</p>
+    </div>
+    <nav class="toc" id="topics"></nav>
+    <div class="qlist" id="qlist"></div>
+  </section>
+
+  <!-- LABORATORI -->
+  <section class="view" id="v-laboratori" hidden>
+    <div class="hero">
+      <span class="eyebrow">Circuits interactius</span>
+      <h2>Laboratori</h2>
+      <p class="lede">Clica una <b>bombeta</b> per treure-la o tornar-la a posar. Clica un <b>interruptor</b> per obrir-lo o tancar-lo, i el <b>polsador</b> per prémer-lo. Clica la <b>pila</b> per gastar-la. Abans de clicar, intenta endevinar què passarà!</p>
+    </div>
+    <nav class="toc" id="labtabs"></nav>
+    <div class="lab" id="lab"></div>
+  </section>
+
+  <!-- EXAMEN -->
+  <section class="view" id="v-examen" hidden>
+    <div class="hero">
+      <span class="eyebrow">Com si fos el control</span>
+      <h2>Simulacre d'examen</h2>
+      <p class="lede">12 preguntes de tots els temes, barrejades. Respon-les totes i prem <b>Corregeix l'examen</b> al final. Cada vegada que en facis un de nou, sortiran preguntes diferents.</p>
+    </div>
+    <div class="qlist" id="exam"></div>
+    <div class="qa" id="examBtns"></div>
+    <div id="examResult"></div>
+  </section>
+
+  <p class="foot">Fet a partir del guió d'estudi, el llibre (p. 108–121) i els fulls de treball de classe.</p>
+</main>
+
+<script>
+(function(){
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+/* ---------- Progrés ---------- */
+const KEY = 'energia6-progres';
+let progress = {};
+try { progress = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { progress = {}; }
+function saveProgress(){ try { localStorage.setItem(KEY, JSON.stringify(progress)); } catch (e) {} }
+function saveScore(id, s){ if (!(progress[id] >= s)) { progress[id] = s; saveProgress(); } renderProgress(); renderTopicChips(); }
+
+/* ---------- Circuits ---------- */
+const B = (id, label) => ({ t: 'bulb', id, label });
+const S = (id, label) => ({ t: 'switch', id, label });
+const P = (id, label) => ({ t: 'push', id, label });
+const M = (id, label) => ({ t: 'motor', id, label });
+const BAT = () => ({ t: 'battery', id: 'bat', label: '' });
+
+function par(branches, bottom, o){
+  o = o || {};
+  const w = o.w || 420, L = 40, R = w - 40, y0 = 46, gap = o.gap || 72;
+  const yb = branches.length > 1 ? y0 + gap * (branches.length - 1) + 80 : y0 + 120;
+  const wires = [], dots = [], els = [];
+  const place = (arr, y) => arr.forEach((e, k) => els.push(Object.assign({}, e, { x: L + (R - L) * (k + 1) / (arr.length + 1), y })));
+  branches.forEach((b, i) => { const y = y0 + gap * i; wires.push([L, y, R, y]); if (i > 0) dots.push([L, y], [R, y]); place(b, y); });
+  wires.push([L, y0, L, yb], [R, y0, R, yb], [L, yb, R, yb]);
+  place(bottom, yb);
+  return { w, h: yb + 34, wires, dots, els, model: { s: [{ p: branches.map(b => ({ s: b.map(e => e.id) })) }].concat(bottom.map(e => e.id)) } };
+}
+
+const MIXT = {
+  w: 480, h: 252,
+  wires: [[40,50,440,50],[180,50,180,125],[180,125,320,125],[320,125,320,50],[440,50,440,220],[40,220,440,220],[40,50,40,220]],
+  dots: [[180,50],[320,50]],
+  els: [
+    Object.assign(B('b1','1'), { x: 110, y: 50 }),
+    Object.assign(B('b2','2'), { x: 250, y: 50 }),
+    Object.assign(B('b3','3'), { x: 250, y: 125 }),
+    Object.assign(B('b4','4'), { x: 380, y: 50 }),
+    Object.assign(B('b5','5'), { x: 240, y: 220 }),
+    Object.assign(BAT(), { x: 40, y: 135, r: 90 })
+  ],
+  model: { s: ['b1', { p: ['b2', 'b3'] }, 'b4', 'b5', 'bat'] }
+};
+
+function leafOk(e, tog){ const t = tog.has(e.id); return e.t === 'push' ? t : !t; }
+function evalCircuit(spec, tog){
+  const els = {}; spec.els.forEach(e => els[e.id] = e);
+  const conducts = n => typeof n === 'string' ? leafOk(els[n], tog) : n.s ? n.s.every(conducts) : n.p.some(conducts);
+  const st = {};
+  (function flow(n, ok){
+    if (typeof n === 'string') { st[n] = ok && leafOk(els[n], tog); return; }
+    if (n.s) n.s.forEach((c, i) => flow(c, ok && n.s.every((d, j) => j === i || conducts(d))));
+    else n.p.forEach(c => flow(c, ok));
+  })(spec.model, true);
+  return st;
+}
+
+function elSVG(e, tog, st, interactive){
+  const t = tog.has(e.id), on = !!st[e.id], r = e.r || 0;
+  const mask = (w, h) => `<rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" class="mask"/>`;
+  let g = '', cls = '';
+  if (e.t === 'bulb') {
+    g = mask(34, 34) + (t ? `<circle r="13" class="socket"/>` : (on ? `<circle r="22" class="glow"/>` : '') + `<circle r="13" class="bulb ${on ? 'on' : ''}"/><path d="M-9,-9 L9,9 M9,-9 L-9,9" class="sym"/>`);
+  } else if (e.t === 'motor') {
+    g = mask(38, 38) + (on ? `<circle r="17" class="spin"/>` : '') + `<circle r="13" class="motor ${on ? 'on' : ''}"/><text class="mtext" transform="rotate(${-r})">M</text>`;
+  } else if (e.t === 'switch') {
+    g = mask(38, 32) + `<circle cx="-14" r="2.8" class="dot"/><circle cx="14" r="2.8" class="dot"/>` + (t ? `<line x1="-14" y1="0" x2="11" y2="-13" class="sym"/>` : `<line x1="-14" y1="0" x2="14" y2="0" class="sym"/>`);
+  } else if (e.t === 'push') {
+    const by = t ? -3 : -10;
+    g = mask(38, 38) + `<circle cx="-13" r="2.8" class="dot"/><circle cx="13" r="2.8" class="dot"/><line x1="-16" y1="${by}" x2="16" y2="${by}" class="sym"/><line x1="0" y1="${by}" x2="0" y2="${by - 8}" class="sym"/><line x1="-6" y1="${by - 8}" x2="6" y2="${by - 8}" class="sym"/>`;
+  } else if (e.t === 'battery') {
+    cls = t ? 'dead' : '';
+    g = mask(24, 36) + `<line x1="-4" y1="-14" x2="-4" y2="14" class="bthin"/><line x1="4" y1="-7" x2="4" y2="7" class="bthick"/><g transform="translate(-13,-14)"><text class="plus" transform="rotate(${-r})">+</text></g>`;
+  }
+  return `<g class="el el-${e.t} ${cls} ${interactive ? 'click' : ''}" data-id="${e.id}" transform="translate(${e.x},${e.y}) rotate(${r})"${interactive ? ' role="button" tabindex="0"' : ''}>${g}</g>`;
+}
+function labelSVG(e, tog){
+  let out = '';
+  if (e.label) {
+    const lx = e.x + (e.lx !== undefined ? e.lx : (e.r ? -26 : 0));
+    const ly = e.y + (e.ly !== undefined ? e.ly : (e.r ? 4 : -25));
+    out += `<text x="${lx}" y="${ly}" class="lbl">${e.label}</text>`;
+  }
+  if (e.t === 'battery' && tog.has(e.id)) out += `<text x="${e.x + (e.r ? 34 : 0)}" y="${e.y + (e.r ? 4 : 30)}" class="deadlbl">gastada</text>`;
+  if (e.t === 'bulb' && tog.has(e.id)) out += `<text x="${e.x}" y="${e.y + 30}" class="deadlbl">treta</text>`;
+  return out;
+}
+function circuitSVG(spec, tog, o){
+  o = o || {};
+  const st = o.showState ? evalCircuit(spec, tog) : {};
+  return `<svg viewBox="0 0 ${spec.w} ${spec.h}" width="${o.width || spec.w}" role="img" aria-label="Esquema d'un circuit elèctric">`
+    + spec.wires.map(w => `<line x1="${w[0]}" y1="${w[1]}" x2="${w[2]}" y2="${w[3]}" class="wire"/>`).join('')
+    + spec.dots.map(d => `<circle cx="${d[0]}" cy="${d[1]}" r="4" class="dot"/>`).join('')
+    + spec.els.map(e => elSVG(e, tog, st, o.interactive)).join('')
+    + spec.els.map(e => labelSVG(e, tog)).join('')
+    + `</svg>`;
+}
+const fig = (spec, tog, w) => circuitSVG(spec, new Set(tog || []), { width: w });
+function symbolSVG(t){
+  const e = { t, id: 'x', x: 45, y: 25 };
+  return `<svg viewBox="0 0 90 50" aria-hidden="true"><line x1="0" y1="25" x2="90" y2="25" class="wire"/>${elSVG(e, new Set(t === 'switch' ? ['x'] : []), {}, false)}</svg>`;
+}
+
+/* ---------- Gràfic ---------- */
+const CONSUM = [['Calefacció i aire condicionat',45],['Aigua calenta',20],['Electrodomèstics',18],['Cuina',9],['Il·luminació',5],['Aparells en espera',3]];
+function chartSVG(){
+  const W = 460, lab = 190, bw = 210, rh = 30;
+  let s = `<svg class="chart" viewBox="0 0 ${W} ${CONSUM.length * rh + 34}" width="${W}" role="img" aria-label="Gràfic del consum d'energia en una llar">`;
+  CONSUM.forEach((d, i) => {
+    const y = i * rh + 8, w = bw * d[1] / 50;
+    s += `<text x="${lab - 8}" y="${y + 15}" text-anchor="end">${d[0]}</text><rect class="t" x="${lab}" y="${y + 3}" width="${bw}" height="16" rx="4"/><rect class="b" x="${lab}" y="${y + 3}" width="${w}" height="16" rx="4"/><text class="cv" x="${lab + w + 6}" y="${y + 15}">${d[1]} %</text>`;
+  });
+  s += `<text class="cv" x="${lab}" y="${CONSUM.length * rh + 26}">Consum d'energia en una llar (dades aproximades d'exemple)</text></svg>`;
+  return s;
+}
+
+/* ---------- Temes ---------- */
+const TOPICS = [
+  { k: 'formes', n: "Formes i propietats de l'energia", pg: 'p. 108–109' },
+  { k: 'fonts', n: "Fonts d'energia i centrals", pg: 'p. 110–113' },
+  { k: 'estalvi', n: 'Estalvi i ús sostenible', pg: 'p. 116–117 i 120–121' },
+  { k: 'corrent', n: 'El corrent i els materials', pg: 'p. 114–115' },
+  { k: 'components', n: 'Components i símbols', pg: 'p. 114–115 i 118–119' },
+  { k: 'connexions', n: 'Sèrie i paral·lel', pg: 'fulls de classe' }
+];
+
+/* ---------- Circuits per a preguntes ---------- */
+const CA = par([[B('b1','1'), B('b2','2')]], [BAT()]);
+const CB = par([[B('b1','1')], [B('b2','2')]], [BAT()]);
+const C_OBERT = par([[B('b1',''), S('s','')]], [BAT()]);
+const C_INT = par([[S('s1','I1'), B('b1','1')], [S('s2','I2'), B('b2','2')]], [BAT(), S('sg','General')]);
+const C_POLS = par([[M('m1','Motor')]], [BAT(), P('p','Polsador')]);
+const C_PILA = par([[B('b1','Bombeta'), S('s','Interruptor')]], [BAT()]);
+const D_SOL2 = par([[B('b1','1')], [S('s','I'), B('b2','2')]], [BAT()], { w: 300 });
+const D_TOT = par([[B('b1','1')], [B('b2','2')]], [BAT(), S('s','I')], { w: 300 });
+const D_SOL1 = par([[S('s','I'), B('b1','1')], [B('b2','2')]], [BAT()], { w: 300 });
+const D20_OK = par([[B('b1','')], [B('b2','')], [B('b3','')], [M('m1','')]], [BAT(), S('s','')], { w: 300, gap: 56 });
+const D20_NOSW = par([[B('b1','')], [B('b2','')], [B('b3','')], [M('m1','')]], [BAT()], { w: 300, gap: 56 });
+const D20_SER = par([[B('b1',''), B('b2',''), B('b3',''), M('m1','')]], [BAT(), S('s','')], { w: 300 });
+const D_SER = par([[B('b1','1'), B('b2','2')]], [BAT()], { w: 300 });
+const D_PAR = par([[B('b1','1')], [B('b2','2')]], [BAT()], { w: 300 });
+
+const FORMS = ['Mecànica','Lluminosa','Tèrmica','Elèctrica','Química','Nuclear'];
+
+/* ---------- Preguntes ---------- */
+const Q = [
+/* ===== FORMES I PROPIETATS ===== */
+{ t:'formes', type:'match', q:"Relaciona cada exemple amb la forma d'energia.", pairs:[
+  ['Una pilota que es mou','Mecànica'],['La llum d’una llanterna','Lluminosa'],['L’energia emmagatzemada a la gasolina','Química'],
+  ['L’energia associada a la temperatura','Tèrmica'],['L’energia que circula pels cables','Elèctrica'],['L’energia que s’obté de l’urani','Nuclear']],
+  exp:"Moviment = mecànica. Gasolina, aliments i piles = química. Urani i plutoni = nuclear." },
+{ t:'formes', type:'fill', q:'Completa el text amb les paraules del requadre.',
+  text:"L'energia és necessària perquè es produeixin {} en la matèria. Les persones obtenim energia dels {}. Aquesta energia és {}. Les plantes aprofiten l'energia {} del Sol per fer la fotosíntesi.",
+  a:['canvis','aliments','química','lluminosa'], extra:['nuclear','cables'], exp:"L'energia és la causa dels canvis. Els aliments tenen energia química." },
+{ t:'formes', type:'mc', q:'Quin tipus d’energia té, sobretot, una bombeta encesa?', opts:['Lluminosa (i una mica de tèrmica)','Elèctrica','Química','Nuclear'], a:0,
+  exp:"A la bombeta hi entra energia elèctrica, però el que dona és llum (lluminosa) i una mica de calor (tèrmica)." },
+{ t:'formes', type:'mc', q:'Les aspes d’un ventilador que giren tenen energia…', opts:['Mecànica','Elèctrica','Tèrmica','Lluminosa'], a:0,
+  exp:"Tot el que es mou té energia mecànica. L'electricitat és la que fa funcionar el motor, però les aspes giren: mecànica." },
+{ t:'formes', type:'mc', q:'Un llibre col·locat a dalt de tot d’un prestatge, té energia mecànica?', opts:['Sí, perquè està elevat i pot començar a moure’s (caure)','No, perquè no es mou','No, només té energia química','Només si és de metall'], a:0,
+  exp:"El llibre diu que també tenen energia mecànica els cossos que estan elevats, perquè poden començar a moure's." },
+{ t:'formes', type:'match', q:"Quina propietat de l'energia mostra cada situació?", pairs:[
+  ['Guardem energia en una bateria per fer-la servir més tard','S’emmagatzema'],['Una raqueta en moviment colpeja una pilota','Es transfereix'],
+  ['Un camió cisterna porta combustible fins a una benzinera','Es transporta'],['Una placa fotovoltaica converteix la llum en electricitat','Es transforma']],
+  exp:"Transferir = passa d'un objecte a un altre. Transportar = es trasllada d'un lloc a un altre. Transformar = canvia de tipus." },
+{ t:'formes', type:'table', q:"Completa les transformacions principals d'energia.", cols:["Energia d'entrada","Energia útil de sortida"], opts:FORMS, rows:[
+  { l:'Ventilador', a:['Elèctrica','Mecànica'] },{ l:'Radiador elèctric', a:['Elèctrica','Tèrmica'] },{ l:'Placa fotovoltaica', a:['Lluminosa','Elèctrica'] },
+  { l:'Cotxe de gasolina', a:['Química','Mecànica'] },{ l:'Torradora', a:['Elèctrica','Tèrmica'] },{ l:'Persona que va en bicicleta', a:['Química','Mecànica'] }],
+  exp:"Pensa què hi entra (la pila, l'endoll, la gasolina, el menjar, la llum...) i què en surt de profit (moviment, calor, llum...)." },
+{ t:'formes', type:'mc', q:'Posem una cullera metàl·lica freda dins d’una sopa calenta. Cap a on va la calor?', opts:['De la sopa a la cullera','De la cullera a la sopa','No passa calor perquè la cullera és de metall','Va de la cullera a l’aire'], a:0,
+  exp:"La calor sempre passa del cos més calent al més fred. La cullera s'escalfa (i el metall és bon conductor de la calor)." },
+{ t:'formes', type:'tf', q:'La calor passa del cos més fred al cos més calent.', a:false, fix:"La calor passa del cos més calent al més fred, fins que tenen la mateixa temperatura." },
+{ t:'formes', type:'tf', q:'Com més energia tèrmica té un cos, més elevada és la seva temperatura.', a:true, exp:"Correcte: ho diu el llibre a l'energia tèrmica." },
+{ t:'formes', type:'tf', q:'Una quantitat petita d’urani conté molta energia.', a:true, exp:"Sí, per això les centrals nuclears produeixen molta electricitat." },
+{ t:'formes', type:'mc', q:'Quina transformació d’energia passa en una espelma encesa?', opts:['Química → lluminosa i tèrmica','Elèctrica → lluminosa','Tèrmica → química','Lluminosa → mecànica'], a:0,
+  exp:"La cera té energia química. Quan crema, fa llum (lluminosa) i calor (tèrmica)." },
+{ t:'formes', type:'mc', q:'I en una llanterna de piles?', opts:['Química (pila) → elèctrica → lluminosa','Lluminosa → química','Mecànica → nuclear','Tèrmica → elèctrica'], a:0,
+  exp:"La pila guarda energia química, que es transforma en elèctrica i la bombeta la converteix en llum." },
+{ t:'formes', type:'sort', q:"Classifica aquests electrodomèstics segons l'energia útil que donen.", cats:['Tèrmica','Lluminosa','Mecànica'], items:[
+  ['Estufa',0],['Vitroceràmica',0],['Làmpada',1],['Pantalla de l’ordinador',1],['Ventilador',2],['Batedora',2]],
+  exp:"Tots reben electricitat: el que canvia és l'energia útil que en surt." },
+{ t:'formes', type:'open', q:"Descriu una situació de la teva vida en què necessitis energia. Explica d'on prové i quin canvi o activitat fa possible.",
+  model:"Quan vaig a l'escola en bicicleta, faig servir l'energia química dels aliments que he menjat. Els meus músculs la transformen en energia mecànica i la bicicleta es mou." },
+{ t:'formes', type:'open', q:'Explica quines transformacions d’energia es produeixen en un radiador elèctric i en un ventilador.',
+  model:"Al radiador, l'energia elèctrica es transforma en energia tèrmica (calor). Al ventilador, l'energia elèctrica es transforma en energia mecànica: les aspes giren i mouen l'aire." },
+
+/* ===== FONTS I CENTRALS ===== */
+{ t:'fonts', type:'sort', q:"Classifica aquestes fonts d'energia.", cats:['Renovable','No renovable'], items:[
+  ['Sol',0],['Carbó',1],['Vent',0],['Petroli',1],['Urani',1],['Biomassa',0],['Gas natural',1],['Aigua en moviment',0],['Calor interna de la Terra',0],['Onades',0]],
+  exp:"Renovables: no s'esgoten o es regeneren. No renovables: combustibles fòssils (carbó, petroli, gas natural) i nuclears (urani, plutoni)." },
+{ t:'fonts', type:'match', q:'Relaciona cada central amb la descripció correcta.', pairs:[
+  ['Hidroelèctrica','Aprofita l’aigua en moviment'],['Eòlica','Aprofita la força del vent'],['Solar fotovoltaica','Transforma directament la llum'],
+  ['Tèrmica de combustibles fòssils','Crema carbó o gas per escalfar aigua'],['Nuclear','Utilitza energia de l’urani']],
+  exp:"Hidro = aigua. Eòlica = vent. Nuclear = urani." },
+{ t:'fonts', type:'order', q:"Ordena el camí de l'energia en una central hidroelèctrica, des de l'aigua fins a casa.", items:[
+  "L'aigua en moviment fa girar una turbina.",'La turbina fa girar el generador.','El generador produeix energia elèctrica.','La xarxa de cables transporta l’electricitat.','L’electricitat arriba als aparells de les llars.'] },
+{ t:'fonts', type:'fill', q:"Completa l'esquema d'una central hidroelèctrica.",
+  text:"Corrent d'aigua → energia {} → Turbina → energia {} → Generador → energia {}",
+  a:['mecànica','mecànica','elèctrica'], extra:['química','lluminosa'], exp:"L'aigua i la turbina es mouen (mecànica). El generador la converteix en elèctrica." },
+{ t:'fonts', type:'mc', q:'Què fa el generador d’una central?', opts:['Transforma el moviment (energia mecànica) en energia elèctrica, gràcies a imants i bobines','Emmagatzema l’electricitat per a la nit','Escalfa l’aigua','Transporta l’electricitat fins a les cases'], a:0,
+  exp:"El generador té imants potents i bobines de cable. Quan la bobina gira a prop dels imants es produeix electricitat." },
+{ t:'fonts', type:'mc', q:'Què fa girar la turbina d’una central tèrmica o d’una central nuclear?', opts:['El vapor d’aigua a gran pressió','El vent','La llum del sol','Les onades'], a:0,
+  exp:"A les tèrmiques i a les nuclears s'escalfa aigua fins a fer vapor, i el vapor fa girar la turbina." },
+{ t:'fonts', type:'mc', q:'Quina d’aquestes centrals NO necessita turbina?', opts:['La solar fotovoltaica','La hidroelèctrica','L’eòlica','La nuclear'], a:0,
+  exp:"A les fotovoltaiques el procés és diferent: les plaques tenen materials que generen electricitat quan reben llum." },
+{ t:'fonts', type:'mc', q:'Una família vol escalfar l’aigua de la dutxa amb el Sol. Què ha d’instal·lar?', opts:['Col·lectors solars','Plaques fotovoltaiques','Un aerogenerador','Una turbina'], a:0,
+  exp:"Col·lector solar → capta la calor (energia tèrmica) per escalfar aigua. Placa fotovoltaica → transforma la llum en electricitat." },
+{ t:'fonts', type:'mc', q:'Per què el vent es considera una font renovable d’energia?', opts:['Perquè no s’esgota encara que el fem servir','Perquè és gratuït','Perquè és molt fort','Perquè es troba sota terra'], a:0,
+  exp:"Renovable vol dir que no s'esgota o que es regenera a mesura que es consumeix." },
+{ t:'fonts', type:'mc', q:'Quina frase diferencia bé una FONT d’energia d’una FORMA d’energia?', opts:['El vent és una font (un recurs de la natura); el moviment del vent és energia mecànica (una forma)','Són el mateix','La font és sempre elèctrica','La forma és el lloc d’on surt l’energia'], a:0,
+  exp:"Font = recurs de la natura que fem servir per obtenir energia (sol, vent, carbó...). Forma = com es manifesta l'energia (mecànica, química...)." },
+{ t:'fonts', type:'tf', q:"L'urani és una font d'energia renovable.", a:false, fix:"L'urani és una font no renovable: és un combustible nuclear que s'extreu de la natura i s'esgota." },
+{ t:'fonts', type:'tf', q:'El petroli es regenera tan de pressa com el consumim.', a:false, fix:"El petroli ha trigat milions d'anys a formar-se, per això s'acaba si el consumim tan de pressa." },
+{ t:'fonts', type:'tf', q:'La biomassa pot provenir de restes d’éssers vius, com la fusta o els fems.', a:true, exp:"Correcte. La biomassa té energia química." },
+{ t:'fonts', type:'tf', q:'L’electricitat es pot emmagatzemar fàcilment en grans quantitats.', a:false, fix:"No es pot emmagatzemar fàcilment: s'ha de produir la que es necessita a cada moment (encara que hi ha bateries)." },
+{ t:'fonts', type:'order', q:"Ordena el recorregut de l'electricitat des de la central fins a casa.", items:[
+  'Es produeix a la central elèctrica.','Viatja per les línies elèctriques penjades de les torres.','Arriba a la ciutat (xarxa elèctrica).','Entra a casa i fa funcionar els aparells.'] },
+{ t:'fonts', type:'mc', q:'Algunes calefaccions funcionen amb pellets (boletes de serradures de fusta). A quina font d’energia pertanyen?', opts:['Biomassa (renovable)','Combustibles fòssils','Energia nuclear','Energia geotèrmica'], a:0,
+  exp:"Els pellets es fan amb restes de fusta: són biomassa." },
+{ t:'fonts', type:'open', q:"Compara dues fonts d'energia: l'energia solar i la geotèrmica. D'on prové cadascuna?",
+  model:"Totes dues són renovables. L'energia solar prové del Sol, que ens dona llum i calor. L'energia geotèrmica prové de la calor de l'interior de la Terra, i es fa servir per escalfar aigua, per a la calefacció o per fer electricitat." },
+{ t:'fonts', type:'open', q:'Explica la diferència entre una font renovable i una no renovable. Posa’n un exemple de cadascuna.',
+  model:"Una font renovable no s'esgota o es regenera a mesura que es consumeix, i gairebé no contamina (per exemple, el vent). Una font no renovable s'acaba perquè triga milions d'anys a formar-se, i sol contaminar (per exemple, el petroli)." },
+
+/* ===== ESTALVI I ÚS SOSTENIBLE ===== */
+{ t:'estalvi', type:'fill', q:'Completa el text.',
+  text:"Quan cremem combustibles {}, emetem diòxid de {}. L'augment dels gasos d'efecte d'{} contribueix a fer pujar la {} mitjana del planeta. Les centrals nuclears generen {} radioactius que cal gestionar amb seguretat.",
+  a:['fòssils','carboni','hivernacle','temperatura','residus'], extra:['renovables'], exp:"Aquest és el problema de l'escalfament global." },
+{ t:'estalvi', type:'tf', q:'Les fonts renovables no tenen cap impacte ambiental.', a:false, fix:"També tenen impacte, encara que molt menor: els embassaments canvien els rius, els aerogeneradors i les línies elèctriques afecten els ocells, les plaques ocupen terreny." },
+{ t:'estalvi', type:'tf', q:'El canvi climàtic només afecta els animals.', a:false, fix:"El canvi climàtic afecta tots els éssers vius: persones, animals i plantes." },
+{ t:'estalvi', type:'tf', q:'Els combustibles fòssils es poden esgotar.', a:true, exp:"Sí, són fonts no renovables." },
+{ t:'estalvi', type:'tf', q:'La contaminació de l’aire pot perjudicar la salut.', a:true, exp:"Respirar aire contaminat és perjudicial, sobretot per al cor i l'aparell respiratori." },
+{ t:'estalvi', type:'match', q:'Relaciona cada causa amb el seu impacte.', pairs:[
+  ['El fum dels cotxes i de les centrals tèrmiques','Contaminació de l’aire'],['Els gasos d’efecte d’hivernacle','Escalfament global'],
+  ['Les centrals nuclears','Residus radioactius'],['Extreure petroli i carbó cada dia','Esgotament dels recursos']],
+  exp:"Són els quatre impactes del guió: esgotament, contaminació, escalfament global i residus." },
+{ t:'estalvi', type:'sort', q:"Aquesta acció serveix per reduir el consum o per fer servir fonts renovables?", cats:['Reduir el consum','Fonts renovables'], items:[
+  ['Apagar els llums quan surto d’una habitació',0],['Posar plaques solars a la teulada',1],['Anar a l’escola caminant o en bicicleta',0],
+  ['Posar la calefacció a 20 °C',0],['Escalfar l’aigua amb col·lectors solars',1],['Desconnectar els aparells que no fem servir',0]],
+  exp:"Reduir = gastar menys energia. Renovables = la que gastem ve de fonts netes. Totes dues ajuden a reduir la petjada de carboni." },
+{ t:'estalvi', type:'mc', q:'Què és la petjada de carboni?', opts:['El conjunt d’emissions de gasos d’efecte d’hivernacle que produeix una activitat','La marca que deixa el carbó a terra','La quantitat de carbó que hi ha en una mina','Un tipus de central tèrmica'], a:0,
+  exp:"Es pot reduir caminant, anant en bicicleta o en transport públic, i estalviant energia." },
+{ t:'estalvi', type:'mc', q:'Per què el consum de combustibles fòssils contribueix a l’escalfament de la Terra?', opts:['Perquè quan es cremen emeten diòxid de carboni, un gas d’efecte d’hivernacle que reté la calor del Sol','Perquè són molt calents','Perquè s’esgoten','Perquè fan soroll'], a:0,
+  exp:"Els gasos d'efecte d'hivernacle absorbeixen l'escalfor del Sol i fan pujar la temperatura." },
+{ t:'estalvi', type:'mc', q:'En una aula buida hi ha els llums encesos. Quina és la millor solució?', opts:['Apagar els llums quan no hi ha ningú','Posar bombetes de més potència','Obrir les finestres','Encendre la calefacció'], a:0 },
+{ t:'estalvi', type:'mc', q:'A l’aula del costat, la calefacció està engegada amb les finestres obertes. Què cal fer?', opts:['Tancar les finestres (o apagar la calefacció mentre es ventila)','Pujar la calefacció','Obrir la porta també','Res, no gasta energia'], a:0,
+  exp:"La calor s'escapa per les finestres i la calefacció ha de treballar més." },
+{ t:'estalvi', type:'mc', q:'Quina lletra de l’etiqueta energètica indica l’electrodomèstic que gasta menys energia?', opts:['A','D','G','F'], a:0,
+  exp:"Els electrodomèstics de baix consum (A) són una mica més cars però permeten estalviar a la factura." },
+{ t:'estalvi', type:'mc', q:'Viu a 1 km de l’escola. Quina opció té menys petjada de carboni?', opts:['Anar-hi caminant','Que la portin en cotxe','Anar-hi en moto','Anar-hi en taxi'], a:0 },
+{ t:'estalvi', type:'mc', q:'Per què els combustibles d’aviació fets amb biomassa (SAF) redueixen la petjada de carboni, però no l’eliminen?', opts:['Perquè quan es cremen també treuen CO₂, però les plantes amb què es fan l’havien absorbit en créixer','Perquè no es cremen mai','Perquè són fòssils','Perquè els avions van més a poc a poc'], a:0,
+  exp:"Encara emeten gasos, i fabricar-los i transportar-los també té emissions. Per això un vol mai és impacte zero." },
+{ t:'estalvi', type:'mc', q:'Mira el gràfic. Quina activitat fa gastar més energia a la llar?', fig:'CHART', opts:['La calefacció i l’aire condicionat','La il·luminació','La cuina','Els aparells en espera'], a:0,
+  exp:"És gairebé la meitat del consum (45 %)." },
+{ t:'estalvi', type:'mc', q:'A partir del gràfic, quina proposta estalviaria més energia?', fig:'CHART', opts:['Posar la calefacció a 20 °C i tancar bé portes i finestres','Desendollar el carregador del mòbil','Canviar una bombeta','Cuinar menys'], a:0,
+  exp:"Té més efecte millorar la part que gasta més." },
+{ t:'estalvi', type:'open', q:'Explica per què un combustible fet amb biomassa no converteix automàticament un vol en una activitat sense impacte.',
+  model:"Perquè quan el combustible de biomassa es crema també emet gasos com el diòxid de carboni. A més, per fabricar-lo i transportar-lo també es gasta energia. Contamina menys que el querosè normal, però no és impacte zero. Per això també cal reduir els vols." },
+{ t:'estalvi', type:'open', q:"Tria sequera, inundació o onada de calor. Explica com pot afectar les persones, l'agricultura o els ecosistemes, i proposa una mesura per reduir-ne els danys.",
+  model:"Onada de calor: la temperatura puja molt i algunes persones, sobretot la gent gran, poden patir cops de calor. També es poden assecar els conreus i hi pot haver incendis. Mesura: beure molta aigua, no sortir a les hores de més calor i plantar arbres per tenir ombra. (Sequera: falta aigua, es perden collites i els embassaments es buiden → estalviar aigua. Inundació: l'aigua destrossa cases i camps → no construir a prop dels rius i rieres.)" },
+{ t:'estalvi', type:'open', words:[35,45], q:"Redacta un anunci per a la ràdio de l'escola per fomentar l'estalvi d'energia. Inclou dos consells concrets i un eslògan final. Escriu entre 35 i 45 paraules.",
+  model:"Bon dia a tothom! Sabíeu que podem estalviar energia a l'escola? Quan sortim de classe, apaguem els llums. I a l'hivern, no obrim les finestres amb la calefacció engegada. Si tots hi ajudem, el planeta ho notarà. Eslògan: «Apaga, tanca i estalvia!»" },
+{ t:'estalvi', type:'open', q:'Mira el gràfic del consum d’una llar i fes una proposta sostenible a partir de les dades.', fig:'CHART',
+  model:"La calefacció i l'aire condicionat gasten el 45 % de l'energia. Proposo posar la calefacció a 20 °C a l'hivern, l'aire condicionat no gaire fred a l'estiu, i tancar bé les finestres. També podem escalfar l'aigua amb col·lectors solars, que és el segon consum més gran (20 %)." },
+
+/* ===== CORRENT I MATERIALS ===== */
+{ t:'corrent', type:'sort', q:'Classifica els materials.', cats:['Conductor','Aïllant'], items:[
+  ['Coure',0],['Plàstic',1],['Alumini',0],['Goma',1],['Ferro',0],['Vidre',1],['Fusta',1],['Clau de metall',0]],
+  exp:"Els metalls són bons conductors. La fusta, el plàstic, la goma i el vidre són aïllants." },
+{ t:'corrent', type:'mc', q:'Per què un cable té metall a l’interior i una coberta de plàstic?', opts:['El metall condueix el corrent i el plàstic, que és aïllant, ens protegeix perquè no ens doni una descàrrega','El plàstic condueix millor que el metall','El metall fa que el cable sigui més bonic','El plàstic escalfa el cable'], a:0,
+  exp:"Els cables acostumen a ser de coure (conductor) recobert de plàstic (aïllant)." },
+{ t:'corrent', type:'mc', q:'Fem un circuit amb una pila, una bombeta i dos cables amb pinces, i deixem un buit entre les pinces. Hi posem una cullera de fusta. Què passa?', opts:['La bombeta no s’encén, perquè la fusta és aïllant','La bombeta s’encén, perquè la fusta és conductora','La pila s’escalfa','La bombeta s’encén més fort'], a:0 },
+{ t:'corrent', type:'mc', q:'I si entre les pinces hi posem un clip metàl·lic?', opts:['La bombeta s’encén, perquè el metall és conductor','No s’encén, perquè el metall és aïllant','S’encén només si el clip és de plàstic','La bombeta es trenca'], a:0 },
+{ t:'corrent', type:'order', q:'Ordena els passos per planificar una prova que compari dos materials.', items:[
+  'Fer una predicció: quin material crec que deixarà passar el corrent?','Muntar un circuit amb una pila, una bombeta i cables, deixant un buit.',
+  'Posar el primer material al buit i observar si la bombeta s’encén.','Repetir-ho amb el segon material, amb la mateixa pila i la mateixa bombeta.',
+  'Interpretar el resultat: si s’encén és conductor; si no, és aïllant.'] },
+{ t:'corrent', type:'sort', q:'Escriu l’efecte principal del corrent en cada cas.', cats:['Lluminós','Calorífic','Mecànic','Químic'], items:[
+  ['Una bombeta LED',0],['Una torradora',1],['Un motor de ventilador',2],['Una bateria mentre es carrega',3],['Una planxa',1],['La pantalla d’una tauleta',0],['Una batedora',2],['La bateria d’un mòbil carregant-se',3]],
+  exp:"Lluminós = fa llum. Calorífic = escalfa. Mecànic = fa girar un motor. Químic = carrega piles i bateries." },
+{ t:'corrent', type:'mc', q:'Quin efecte del corrent aprofita un forn de cuina?', opts:['Calorífic','Lluminós','Mecànic','Químic'], a:0 },
+{ t:'corrent', type:'mc', q:'Un fanal solar té una placa fotovoltaica i un llum. Quin és el receptor?', opts:['El llum (la bombeta)','La placa fotovoltaica','El pal','El sol'], a:0,
+  exp:"La placa és el generador (fa l'electricitat) i el llum és el receptor (la transforma en llum)." },
+{ t:'corrent', type:'tf', q:'En general, tots els metalls són bons conductors de l’electricitat.', a:true, exp:"Correcte, ho diu el llibre." },
+{ t:'corrent', type:'tf', q:'El vidre deixa passar bé el corrent elèctric.', a:false, fix:"El vidre és un material aïllant: no condueix bé el corrent." },
+{ t:'corrent', type:'open', q:'Planifica una prova amb una pila i una bombeta per saber si condueix més el paper d’alumini o el cartró. Escriu la predicció i com interpretaràs el resultat.',
+  model:"Predicció: crec que el paper d'alumini condueix i el cartró no, perquè l'alumini és un metall. Prova: munto un circuit amb una pila, una bombeta i cables, deixant un buit. Hi poso l'alumini i miro si la bombeta s'encén. Després hi poso el cartró. Interpretació: si la bombeta s'encén, el material és conductor; si no s'encén, és aïllant." },
+
+/* ===== COMPONENTS I SÍMBOLS ===== */
+{ t:'components', type:'match', q:'Identifica els símbols dels components.', symPairs:true, pairs:[
+  ['battery','Pila'],['bulb','Bombeta'],['switch','Interruptor'],['push','Polsador'],['motor','Motor elèctric']],
+  exp:"Fixa't bé: l'interruptor és una palanca; el polsador té un botó en forma de T." },
+{ t:'components', type:'match', q:'Relaciona cada component amb la seva funció.', pairs:[
+  ['Pila (generador)','Proporciona energia al circuit'],['Cables','Condueixen el corrent elèctric'],['Interruptor','Obre o tanca el circuit a voluntat'],['Receptor','Transforma l’electricitat en un efecte útil']],
+  exp:"Generador → cables → receptor, i l'interruptor per controlar-ho." },
+{ t:'components', type:'mc', q:'Les piles estan carregades i les bombetes funcionen. En quin circuit s’encén la bombeta?', figOpts:true, opts:[
+  '<span class="ol">Circuit A</span>' + fig(C_OBERT, ['s'], 260), '<span class="ol">Circuit B</span>' + fig(C_OBERT, [], 260)], a:1, keep:true,
+  exp:"Al circuit B l'interruptor està tancat: el camí és complet i el corrent circula. Al circuit A està obert." },
+{ t:'components', type:'mc', q:'Què cal fer en aquest circuit perquè la bombeta s’encengui?', fig:fig(C_OBERT, ['s'], 300), opts:['Tancar l’interruptor','Treure la bombeta','Posar-hi un cable de plàstic','Treure la pila'], a:0,
+  exp:"Amb l'interruptor obert el circuit està obert i el corrent no circula." },
+{ t:'components', type:'mc', q:'Quina diferència hi ha entre un interruptor i un polsador?', opts:['L’interruptor es queda obert o tancat; el polsador només tanca el circuit mentre el prems','No hi ha cap diferència','El polsador fa llum','L’interruptor només funciona amb motors'], a:0,
+  exp:"El timbre de casa funciona amb un polsador." },
+{ t:'components', type:'mc', q:'En aquest circuit, què passa quan deixes de prémer el polsador?', fig:fig(C_POLS, [], 300), opts:['El motor s’atura','El motor continua girant','El motor gira més ràpid','La pila es carrega'], a:0,
+  exp:"Quan deixes anar el polsador, el circuit s'obre i el corrent deixa de circular." },
+{ t:'components', type:'tf', q:'En un circuit obert, el corrent circula.', a:false, fix:"En un circuit obert el camí està tallat i el corrent no circula. Circula en un circuit tancat." },
+{ t:'components', type:'tf', q:'La pila és un receptor.', a:false, fix:"La pila és el generador: proporciona l'energia. Els receptors són la bombeta, el motor, el timbre..." },
+{ t:'components', type:'tf', q:'La bombeta és un receptor.', a:true, exp:"Sí: transforma l'energia elèctrica en llum." },
+{ t:'components', type:'multi', q:'L’interruptor està tancat, però la bombeta no s’encén. Quines poden ser les causes de l’avaria? Marca-les totes.', fig:fig(C_PILA, [], 300), opts:[
+  'La pila està gastada','La bombeta està fosa','Un cable està desconnectat','La bombeta està fluixa (mal enroscada)','L’interruptor està tancat'], a:[0,1,2,3],
+  exp:"Si l'interruptor està tancat, el problema ha de ser un altre: la pila, la bombeta o algun cable." },
+{ t:'components', type:'mc', q:'La pila d’aquest circuit està gastada i l’interruptor està tancat. Què passa?', fig:fig(C_PILA, ['bat'], 300), opts:['La bombeta no s’encén, perquè no hi ha energia','La bombeta s’encén igualment','La bombeta fa més llum','La bombeta s’encén a mitges i s’apaga'], a:0 },
+{ t:'components', type:'open', q:'Un circuit tancat no encén la bombeta. Escriu dues possibles causes.',
+  model:"1) La pila està gastada i no dona energia. 2) La bombeta està fosa. (També: un cable està desconnectat o trencat, o la bombeta està mal enroscada.)" },
+{ t:'components', type:'open', q:'Explica què és un circuit elèctric i quins elements té.',
+  model:"Un circuit elèctric és un recorregut format per diferents elements connectats entre si pels quals circula el corrent elèctric. Té un generador (la pila), cables, un interruptor i un o més receptors (com una bombeta o un motor)." },
+
+/* ===== SÈRIE I PARAL·LEL ===== */
+{ t:'connexions', type:'mc', q:'Quin d’aquests circuits és en sèrie?', figOpts:true, keep:true, opts:[
+  '<span class="ol">Circuit A</span>' + fig(D_SER, [], 260), '<span class="ol">Circuit B</span>' + fig(D_PAR, [], 260)], a:0,
+  exp:"En sèrie, els receptors comparteixen un únic camí. En paral·lel hi ha branques diferents entre dos punts." },
+{ t:'connexions', type:'mc', q:'En aquest circuit en SÈRIE, traiem la bombeta 1. Què passa amb la bombeta 2?', fig:fig(CA, [], 320), opts:['S’apaga, perquè el camí del corrent queda tallat','Continua encesa','Fa més llum','S’apaga i després es torna a encendre'], a:0,
+  exp:"En sèrie només hi ha un camí: si en treus una, s'apaguen totes." },
+{ t:'connexions', type:'mc', q:'En aquest circuit en PARAL·LEL, traiem la bombeta 1. Què passa amb la bombeta 2?', fig:fig(CB, [], 320), opts:['Continua encesa, perquè té un altre camí per on passa el corrent','S’apaga','S’apaga a mitges','Explota'], a:0,
+  exp:"Cada bombeta té la seva branca. Si en treus una, el corrent continua passant per l'altra." },
+{ t:'connexions', type:'multi', q:'En aquest circuit deixa de funcionar la bombeta 2. Quines bombetes continuen enceses?', fig:fig(MIXT, [], 380), opts:['1','3','4','5','Cap'], a:[0,1,2,3],
+  exp:"La 2 i la 3 estan en paral·lel: el corrent passa per la branca de la 3. La 1, la 4 i la 5 estan en sèrie amb tot." },
+{ t:'connexions', type:'multi', q:'Al mateix circuit, ara deixa de funcionar la bombeta 1. Quines continuen enceses?', fig:fig(MIXT, [], 380), opts:['2','3','4','5','Cap'], a:[4],
+  exp:"La bombeta 1 és al tram comú (en sèrie): si falla, es talla el camí de totes." },
+{ t:'connexions', type:'multi', q:'I si deixa de funcionar la bombeta 5?', fig:fig(MIXT, [], 380), opts:['1','2','3','4','Cap'], a:[4],
+  exp:"La 5 també és al tram comú: no s'encén cap." },
+{ t:'connexions', type:'multi', q:'En aquest circuit tots els interruptors estan tancats. Si obrim l’interruptor I1, quines bombetes funcionen?', fig:fig(C_INT, [], 360), opts:['Bombeta 1','Bombeta 2','Cap'], a:[1],
+  exp:"I1 és dins de la branca de la bombeta 1: només controla aquesta bombeta." },
+{ t:'connexions', type:'multi', q:'I si obrim l’interruptor general?', fig:fig(C_INT, [], 360), opts:['Bombeta 1','Bombeta 2','Cap'], a:[2],
+  exp:"L'interruptor general és al tram comú: controla tot el circuit." },
+{ t:'connexions', type:'mc', q:'En quin esquema l’interruptor I controla NOMÉS la bombeta 2?', figOpts:true, opts:[fig(D_SOL2,[],260), fig(D_TOT,[],260), fig(D_SOL1,[],260)], a:0,
+  exp:"Per controlar només un receptor, l'interruptor ha d'anar a la seva branca." },
+{ t:'connexions', type:'mc', q:'En quin esquema l’interruptor I controla TOT el circuit?', figOpts:true, opts:[fig(D_SOL2,[],260), fig(D_TOT,[],260), fig(D_SOL1,[],260)], a:1,
+  exp:"Per controlar tot el circuit, l'interruptor ha d'anar al tram comú, al costat de la pila." },
+{ t:'connexions', type:'mc', q:'Quin esquema mostra tres bombetes en paral·lel, un motor en una quarta branca i un interruptor general?', figOpts:true, opts:[fig(D20_NOSW,[],230), fig(D20_OK,[],230), fig(D20_SER,[],230)], a:1,
+  exp:"Necessites 4 branques (3 bombetes + motor) i l'interruptor al tram comú. No te'l deixis!" },
+{ t:'connexions', type:'tf', q:'En un circuit en sèrie hi ha diverses branques per on pot passar el corrent.', a:false, fix:"En sèrie hi ha un únic camí. Les branques són del circuit en paral·lel." },
+{ t:'connexions', type:'tf', q:'Els aparells de casa estan connectats en paral·lel.', a:true, exp:"Per això pots apagar un llum i la nevera continua funcionant." },
+{ t:'connexions', type:'open', q:'Per què a casa els llums i els endolls estan connectats en paral·lel i no en sèrie?',
+  model:"Perquè en paral·lel cada aparell té la seva branca. Si un aparell s'espatlla o l'apaguem, els altres continuen funcionant. En sèrie, si en falla un, s'apagarien tots." },
+{ t:'connexions', type:'open', q:'Dibuixa a la llibreta un circuit amb una pila, un interruptor general i dues bombetes en sèrie. Després explica què passa si fons una bombeta.',
+  model:"A l'esquema: una pila, un interruptor i dues bombetes, tot en un sol camí (una rere l'altra). Si es fon una bombeta, l'altra també s'apaga perquè el camí del corrent queda tallat. Mira la pestanya Laboratori → En sèrie per comprovar-ho." }
+];
+Q.forEach((q, i) => { q.id = q.t + '-' + i; if (q.fig === 'CHART') q.fig = chartSVG(); });
+
+/* ---------- Constructors de preguntes ---------- */
+const TYPE_LABEL = { mc:'Tria la resposta', tf:'Vertader o fals', match:'Relaciona', fill:'Completa', sort:'Classifica', order:'Ordena', multi:'Marca les correctes', table:'Completa la taula', open:'Respon i compara' };
+
+const BUILD = {
+  mc(q, body){
+    let sel = null;
+    const order = q.keep ? q.opts.map((_, i) => i) : shuffle(q.opts.map((_, i) => i));
+    body.innerHTML = `<div class="opts ${q.figOpts ? 'figopts' : ''}">${order.map(i => `<button type="button" class="opt" data-i="${i}">${q.opts[i]}</button>`).join('')}</div>`;
+    $$('.opt', body).forEach(b => b.addEventListener('click', () => { $$('.opt', body).forEach(x => x.classList.remove('sel')); b.classList.add('sel'); sel = +b.dataset.i; }));
+    return { answered: () => sel !== null, check(){ $$('.opt', body).forEach(b => { const i = +b.dataset.i; if (i === q.a) b.classList.add('right'); else if (i === sel) b.classList.add('wrong'); b.disabled = true; }); return sel === q.a ? 1 : 0; } };
+  },
+  tf(q, body){
+    let sel = null;
+    body.innerHTML = `<div class="tf"><button type="button" class="opt" data-v="1">Vertader</button><button type="button" class="opt" data-v="0">Fals</button></div>`;
+    $$('.opt', body).forEach(b => b.addEventListener('click', () => { $$('.opt', body).forEach(x => x.classList.remove('sel')); b.classList.add('sel'); sel = b.dataset.v === '1'; }));
+    return { answered: () => sel !== null, check(){ $$('.opt', body).forEach(b => { const v = b.dataset.v === '1'; if (v === q.a) b.classList.add('right'); else if (v === sel) b.classList.add('wrong'); b.disabled = true; }); return sel === q.a ? 1 : 0; } };
+  },
+  match(q, body){
+    const right = shuffle(q.pairs.map(p => p[1]));
+    body.innerHTML = `<div class="rows">${q.pairs.map((p, i) => `<div class="row"><div class="rl">${q.symPairs ? symbolSVG(p[0]) : p[0]}</div><div><select data-i="${i}" aria-label="Resposta"><option value="">Tria…</option>${right.map(r => `<option>${r}</option>`).join('')}</select></div></div>`).join('')}</div>`;
+    const sels = $$('select', body);
+    return { answered: () => sels.every(s => s.value), check(){ let ok = 0; sels.forEach(s => { const c = q.pairs[+s.dataset.i][1]; s.disabled = true; if (s.value === c) { ok++; s.classList.add('right'); } else { s.classList.add('wrong'); s.insertAdjacentHTML('afterend', `<span class="sol">→ ${c}</span>`); } }); return ok / sels.length; } };
+  },
+  fill(q, body){
+    const bank = shuffle(Array.from(new Set(q.a.concat(q.extra || []))));
+    let k = 0;
+    const html = q.text.replace(/\{\}/g, () => `<select class="blank" data-i="${k++}" aria-label="Forat ${k}"><option value="">…</option>${bank.map(w => `<option>${w}</option>`).join('')}</select>`);
+    body.innerHTML = `<p class="bank">Paraules: ${bank.map(w => `<span>${w}</span>`).join('')}</p><p class="filltext">${html}</p>`;
+    const sels = $$('select', body);
+    return { answered: () => sels.every(s => s.value), check(){ let ok = 0; sels.forEach(s => { const c = q.a[+s.dataset.i]; s.disabled = true; if (s.value === c) { ok++; s.classList.add('right'); } else { s.classList.add('wrong'); s.insertAdjacentHTML('afterend', ` <b style="color:var(--ok)">(${c})</b>`); } }); return ok / sels.length; } };
+  },
+  sort(q, body){
+    const order = shuffle(q.items.map((_, i) => i));
+    body.innerHTML = `<div class="rows">${order.map(i => `<div class="srow" data-i="${i}"><span>${q.items[i][0]}</span><div class="seg">${q.cats.map((c, ci) => `<button type="button" data-c="${ci}">${c}</button>`).join('')}</div></div>`).join('')}</div>`;
+    $$('.srow', body).forEach(r => $$('button', r).forEach(b => b.addEventListener('click', () => { $$('button', r).forEach(x => x.classList.remove('sel')); b.classList.add('sel'); r.dataset.v = b.dataset.c; })));
+    const rows = $$('.srow', body);
+    return { answered: () => rows.every(r => r.dataset.v !== undefined), check(){ let ok = 0; rows.forEach(r => { const c = q.items[+r.dataset.i][1]; $$('button', r).forEach(b => { b.disabled = true; const ci = +b.dataset.c; if (ci === c) b.classList.add('right'); else if (String(ci) === r.dataset.v) b.classList.add('wrong'); b.classList.remove('sel'); }); if (String(c) === r.dataset.v) ok++; }); return ok / rows.length; } };
+  },
+  order(q, body){
+    const n = q.items.length;
+    let cur = shuffle(q.items.map((_, i) => i));
+    while (cur.every((v, i) => v === i)) cur = shuffle(cur);
+    let locked = false;
+    function draw(marks){
+      body.innerHTML = `<ol class="ord">${cur.map((i, p) => `<li class="${marks ? (i === p ? 'right' : 'wrong') : ''}"><span class="pos">${p + 1}</span><span class="ot">${q.items[i]}${marks && i !== p ? `<span class="sol">Va a la posició ${i + 1}</span>` : ''}</span><span class="mv"><button type="button" data-p="${p}" data-d="-1" aria-label="Puja" ${locked || p === 0 ? 'disabled' : ''}>▲</button><button type="button" data-p="${p}" data-d="1" aria-label="Baixa" ${locked || p === n - 1 ? 'disabled' : ''}>▼</button></span></li>`).join('')}</ol>`;
+    }
+    body.addEventListener('click', e => { const b = e.target.closest('button[data-p]'); if (!b || locked) return; const p = +b.dataset.p, d = +b.dataset.d; const t = cur[p]; cur[p] = cur[p + d]; cur[p + d] = t; draw(); });
+    draw();
+    return { answered: () => true, check(){ locked = true; const ok = cur.filter((v, i) => v === i).length; draw(true); return ok / n; } };
+  },
+  multi(q, body){
+    body.innerHTML = `<div class="multi">${q.opts.map((o, i) => `<label><input type="checkbox" id="${q.id}-m${i}" data-i="${i}">${o}</label>`).join('')}</div>`;
+    const boxes = $$('input', body);
+    return { answered: () => boxes.some(b => b.checked), check(){ let ok = 0; boxes.forEach(b => { const i = +b.dataset.i, should = q.a.includes(i); b.disabled = true; if (b.checked === should) ok++; if (should) b.parentElement.classList.add('right'); else if (b.checked) b.parentElement.classList.add('wrong'); }); return ok === boxes.length ? 1 : Math.max(0, (ok - 1) / boxes.length); } };
+  },
+  table(q, body){
+    body.innerHTML = `<div class="tbl"><table><thead><tr><th>Aparell o procés</th>${q.cols.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>${q.rows.map((r, ri) => `<tr><td>${r.l}</td>${q.cols.map((_, ci) => `<td><select data-r="${ri}" data-c="${ci}" aria-label="${r.l}: ${q.cols[ci]}"><option value="">…</option>${q.opts.map(o => `<option>${o}</option>`).join('')}</select></td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    const sels = $$('select', body);
+    return { answered: () => sels.every(s => s.value), check(){ let ok = 0; sels.forEach(s => { const c = q.rows[+s.dataset.r].a[+s.dataset.c]; s.disabled = true; if (s.value === c) { ok++; s.classList.add('right'); } else { s.classList.add('wrong'); s.insertAdjacentHTML('afterend', `<span class="sol">→ ${c}</span>`); } }); return ok / sels.length; } };
+  },
+  open(q, body){
+    body.innerHTML = `<textarea id="${q.id}-txt" placeholder="Escriu aquí la teva resposta…"></textarea>${q.words ? `<span class="wc" id="${q.id}-wc">0 paraules (cal entre ${q.words[0]} i ${q.words[1]})</span>` : ''}`;
+    if (q.words) { const ta = $('textarea', body), wc = $('.wc', body); ta.addEventListener('input', () => { const n = (ta.value.trim().match(/\S+/g) || []).length; wc.textContent = n + ' paraules (cal entre ' + q.words[0] + ' i ' + q.words[1] + ')'; wc.classList.toggle('good', n >= q.words[0] && n <= q.words[1]); }); }
+    return { answered: () => true, check: () => 0 };
+  }
+};
+
+function feedback(fb, s, q){
+  fb.hidden = false;
+  fb.className = 'fb ' + (s === 1 ? 'ok' : s > 0 ? 'part' : 'bad');
+  const head = s === 1 ? 'Molt bé! Tot correcte.' : s > 0 ? 'Gairebé! Mira les correccions en verd.' : 'No és correcte. Mira la solució.';
+  const extra = q.fix ? '<span><b>Correcció:</b> ' + q.fix + '</span>' : q.exp ? '<span>' + q.exp + '</span>' : '';
+  fb.innerHTML = '<strong>' + head + '</strong>' + extra;
+}
+
+function makeCard(q, n, exam){
+  const card = document.createElement('article');
+  card.className = 'q';
+  const isOpen = q.type === 'open';
+  card.innerHTML = `<header class="qh"><span class="qn">${n}</span><span class="qt">${TYPE_LABEL[q.type]}</span>${!exam && progress[q.id] === 1 ? '<span class="done">Encertada</span>' : ''}</header><p class="qq">${q.q}</p>${q.fig ? `<div class="fig">${q.fig}</div>` : ''}<div class="qb"></div><div class="fb" hidden></div>${exam ? '' : `<div class="qa"><button type="button" class="btn primary chk">${isOpen ? 'Mostra la resposta model' : 'Comprova'}</button><button type="button" class="btn ghost rst" hidden>Torna-ho a provar</button></div>`}`;
+  const body = $('.qb', card), fb = $('.fb', card);
+  const api = BUILD[q.type](q, body);
+  if (!exam) {
+    const chk = $('.chk', card), rst = $('.rst', card);
+    chk.addEventListener('click', () => {
+      if (isOpen) {
+        fb.hidden = false; fb.className = 'fb';
+        fb.innerHTML = `<div class="model"><b>Resposta model</b>${q.model}</div><div class="self"><span>Com t'ha anat?</span><button type="button" class="btn small" data-s="1">Ho tenia bé</button><button type="button" class="btn ghost small" data-s="0">Encara no</button></div>`;
+        $$('[data-s]', fb).forEach(b => b.addEventListener('click', () => { const s = +b.dataset.s; saveScore(q.id, s); $('.self', fb).innerHTML = s ? '<span style="color:var(--ok);font-weight:600">Genial! Marcada com a sabuda.</span>' : '<span>Torna a llegir la resposta model i prova d’explicar-ho amb les teves paraules.</span>'; }));
+        chk.hidden = true; return;
+      }
+      if (!api.answered()) { fb.hidden = false; fb.className = 'fb part'; fb.innerHTML = '<strong>Encara no has respost tota la pregunta.</strong>'; return; }
+      const s = api.check(); feedback(fb, s, q); saveScore(q.id, s); chk.hidden = true; rst.hidden = false;
+    });
+    rst.addEventListener('click', () => { const fresh = makeCard(q, n, false); card.replaceWith(fresh.card); });
+  }
+  return { card, api, q, fb };
+}
+
+/* ---------- Progrés i temes ---------- */
+function topicStats(k){ const qs = Q.filter(q => q.t === k); return { done: qs.filter(q => progress[q.id] === 1).length, total: qs.length }; }
+function renderProgress(){
+  $('#prog').innerHTML = TOPICS.map(t => { const s = topicStats(t.k); return `<div class="prow"><span>${t.n}</span><span class="bar"><i style="width:${100 * s.done / s.total}%"></i></span><span class="num">${s.done}/${s.total}</span></div>`; }).join('');
+}
+$('#resetProg').addEventListener('click', () => { $('#resetAsk').hidden = false; });
+$('#resetNo').addEventListener('click', () => { $('#resetAsk').hidden = true; });
+$('#resetYes').addEventListener('click', () => { progress = {}; saveProgress(); $('#resetAsk').hidden = true; renderProgress(); renderTopicChips(); renderTopic(curTopic); });
+
+let curTopic = 'formes';
+try { curTopic = localStorage.getItem(KEY + '-tema') || 'formes'; } catch (e) {}
+if (!TOPICS.some(t => t.k === curTopic) && curTopic !== 'barreja') curTopic = 'formes';
+function renderTopicChips(){
+  $('#topics').innerHTML = TOPICS.map(t => { const s = topicStats(t.k); return `<button type="button" class="chip ${curTopic === t.k ? 'on' : ''}" data-k="${t.k}">${t.n} <small>${s.done}/${s.total}</small></button>`; }).join('') + `<button type="button" class="chip ${curTopic === 'barreja' ? 'on' : ''}" data-k="barreja">Barreja de 10</button>`;
+  $$('#topics .chip').forEach(c => c.addEventListener('click', () => { curTopic = c.dataset.k; try { localStorage.setItem(KEY + '-tema', curTopic); } catch (e) {} renderTopicChips(); renderTopic(curTopic); }));
+}
+function renderTopic(k){
+  const list = $('#qlist'); list.innerHTML = '';
+  const qs = k === 'barreja' ? shuffle(Q).slice(0, 10) : Q.filter(q => q.t === k);
+  qs.forEach((q, i) => list.appendChild(makeCard(q, i + 1, false).card));
+}
+
+/* ---------- Apunts ---------- */
+const NOTES = {
+formes: `
+<p>L'<b>energia</b> és la <b>causa</b> que es produeixin <b>canvis</b> a la matèria: el creixement dels éssers vius, el moviment dels núvols, l'erupció d'un volcà...</p>
+<h3>Les formes de l'energia</h3>
+<div class="kv">
+  <div><b>Mecànica</b>La tenen els cossos en moviment (un cotxe, el vent) i els que estan elevats, perquè poden començar a moure's.</div>
+  <div><b>Lluminosa</b>La que té la llum. Les plantes l'aprofiten per fer la fotosíntesi i ens permet veure-hi.</div>
+  <div><b>Tèrmica</b>És a l'interior de tots els cossos. Com més energia tèrmica, més temperatura.</div>
+  <div><b>Elèctrica</b>La dels llamps i la que circula pels cables i fa funcionar màquines i electrodomèstics.</div>
+  <div><b>Química</b>Emmagatzemada en aliments, combustibles (gasolina), piles i bateries.</div>
+  <div><b>Nuclear</b>És a l'urani i el plutoni. Una quantitat petita conté molta energia.</div>
+</div>
+<h3>Les propietats de l'energia</h3>
+<ul>
+  <li><b>Es transfereix</b>: passa d'uns objectes a uns altres. La raqueta transfereix energia mecànica a la pilota.</li>
+  <li><b>S'emmagatzema</b>: es guarda per fer-la servir després. Piles i bateries.</li>
+  <li><b>Es transporta</b>: es trasllada d'un lloc a un altre. Camions amb combustible, cables elèctrics.</li>
+  <li><b>Es transforma</b>: canvia d'un tipus a un altre. En un cotxe, la química de la gasolina es transforma en mecànica.</li>
+</ul>
+<h3>Energia inicial i final</h3>
+<div class="chain"><span>Espelma</span><em>química →</em><span class="k">lluminosa + tèrmica</span></div>
+<div class="chain"><span>Ventilador</span><em>elèctrica →</em><span class="k">mecànica</span></div>
+<div class="chain"><span>Radiador</span><em>elèctrica →</em><span class="k">tèrmica</span></div>
+<div class="chain"><span>Llanterna</span><em>química → elèctrica →</em><span class="k">lluminosa</span></div>
+<div class="chain"><span>Placa fotovoltaica</span><em>lluminosa →</em><span class="k">elèctrica</span></div>
+<h3>La calor</h3>
+<p>La calor sempre passa del <b>cos més calent</b> al <b>més fred</b>, fins que tots dos tenen la mateixa temperatura. Una cullera freda dins la sopa calenta s'escalfa: la sopa li transfereix energia tèrmica.</p>`,
+fonts: `
+<p>Les <b>fonts d'energia</b> són els <b>recursos de la natura</b> que fem servir per obtenir energia. No confonguis <b>font</b> (d'on la traiem: el vent) amb <b>forma</b> (com es manifesta: energia mecànica).</p>
+<h3>Fonts renovables</h3>
+<p>No s'esgoten o es regeneren, i gairebé no contaminen. Encara no en tenim prou per generar tota l'energia que consumim.</p>
+<div class="kv">
+  <div><b>El Sol</b>Llum → <i>plaques fotovoltaiques</i> → electricitat.<br>Calor → <i>col·lectors solars</i> → aigua calenta i calefacció.</div>
+  <div><b>El vent (eòlica)</b>Energia mecànica que mou aerogeneradors, molins i velers.</div>
+  <div><b>L'aigua (hidràulica)</b>Embassaments i centrals hidroelèctriques. També onades i marees.</div>
+  <div><b>Calor de la Terra (geotèrmica)</b>Per escalfar aigua, calefacció i electricitat.</div>
+  <div><b>La biomassa</b>Restes d'éssers vius (fusta, fems). Té energia química. Pellets!</div>
+</div>
+<h3>Fonts no renovables</h3>
+<p>S'extreuen de la natura i s'esgoten. Són fàcils de fer servir, però contaminen.</p>
+<ul>
+  <li><b>Combustibles fòssils</b>: carbó, petroli (gasoil, gasolina) i gas natural. Energia química. S'usen a les centrals tèrmiques, la calefacció i el transport. Han trigat milions d'anys a formar-se.</li>
+  <li><b>Combustibles nuclears</b>: urani i plutoni. S'usen a les centrals nuclears, que produeixen residus molt perillosos.</li>
+</ul>
+<h3>Les centrals elèctriques</h3>
+<p>La majoria tenen una <b>turbina</b> (hèlices o rodes que giren) i un <b>generador</b> (imants i bobines: quan la bobina gira, es produeix electricitat).</p>
+<div class="chain"><span>Corrent d'aigua</span><em>mecànica →</em><span>Turbina</span><em>mecànica →</em><span>Generador</span><em>→</em><span class="k">Energia elèctrica</span></div>
+<ul>
+  <li><b>Hidroelèctrica</b>: l'aigua en moviment fa girar la turbina. <b>Eòlica</b>: el vent.</li>
+  <li><b>Tèrmica</b> (carbó, gas) i <b>nuclear</b> (urani): escalfen aigua i el <b>vapor</b> a gran pressió fa girar la turbina.</li>
+  <li><b>Fotovoltaica</b>: no té turbina. Les plaques generen electricitat directament amb la llum del Sol.</li>
+</ul>
+<h3>El transport de l'electricitat</h3>
+<div class="chain"><span class="k">Producció</span><em>central →</em><span class="k">Transport</span><em>línies i torres elèctriques →</em><span class="k">Consum</span><em>cases i fàbriques</em></div>
+<p>L'electricitat no es pot emmagatzemar fàcilment: s'ha de produir la que es necessita a cada moment.</p>`,
+estalvi: `
+<h3>Problemes del consum d'energia</h3>
+<ul>
+  <li><b>Esgotament dels recursos</b>: carbó, petroli i gas han trigat milions d'anys a formar-se. Si continuem així, s'acabaran.</li>
+  <li><b>Contaminació de l'atmosfera</b>: cremar combustibles fòssils (cotxes, centrals tèrmiques) treu gasos tòxics. L'aire contaminat perjudica la salut (cor i aparell respiratori) i la pluja contaminada perjudica les plantes.</li>
+  <li><b>Escalfament global</b>: el <b>diòxid de carboni</b> és un gas d'<b>efecte d'hivernacle</b>. Aquests gasos absorbeixen l'escalfor del Sol, fan pujar la temperatura i alteren el clima.</li>
+  <li><b>Residus</b>: les centrals nuclears generen residus radioactius perillosos.</li>
+</ul>
+<p>Les renovables també tenen impacte, però molt menor (embassaments, ocells i aerogeneradors, terreny que ocupen les plaques).</p>
+<h3>Ús sostenible</h3>
+<p>Fer servir l'energia gaudint dels avantatges però evitant les conseqüències negatives. Els governs han d'impulsar les renovables i la ciutadania ha d'<b>estalviar</b>:</p>
+<div class="kv">
+  <div><b>Llum</b>Apagar els llums, aprofitar la llum del sol, desconnectar aparells.</div>
+  <div><b>Electrodomèstics</b>Triar-los de baix consum (etiqueta <b>A</b>).</div>
+  <div><b>Calefacció</b>Uns 20 °C a l'hivern i no passar fred a l'estiu amb l'aire condicionat.</div>
+  <div><b>Transport</b>Menys cotxe: caminar, bicicleta, transport públic.</div>
+  <div><b>Renovables a casa</b>Plaques solars, col·lectors.</div>
+  <div><b>Hores de baix consum</b>Programar aparells (robots, rentadora) quan l'energia costa menys.</div>
+</div>
+<h3>Reduir el consum o fer servir renovables?</h3>
+<p><b>Reduir el consum</b> = gastar menys energia (apagar llums, anar a peu). <b>Fer servir renovables</b> = l'energia que gastem ve de fonts netes (plaques solars). Totes dues redueixen la <b>petjada de carboni</b>: el conjunt d'emissions de gasos d'efecte d'hivernacle d'una activitat.</p>
+<p>Els <b>combustibles d'aviació sostenibles (SAF)</b> fets amb biomassa redueixen fins a un 80 % les emissions, però <b>no les eliminen</b>: quan es cremen també treuen CO₂. Estalviar energia i evitar desplaçaments innecessaris també ajuda.</p>
+<h3>Sequera, inundació i onada de calor</h3>
+<div class="kv">
+  <div><b>Sequera</b>Falta aigua: es perden collites, es buiden els embassaments, incendis. <i>Mesura:</i> estalviar i reutilitzar aigua, reg gota a gota.</div>
+  <div><b>Inundació</b>L'aigua destrossa cases, carreteres i camps. <i>Mesura:</i> no construir a prop de rius i rieres, avisos d'alerta.</div>
+  <div><b>Onada de calor</b>Cops de calor (sobretot gent gran), conreus secs, incendis. <i>Mesura:</i> beure aigua, evitar les hores centrals, arbres i ombres.</div>
+</div>`,
+corrent: `
+<p>L'electricitat circula pels cables i pels aparells en forma de <b>corrent elèctric</b>.</p>
+<h3>Conductors i aïllants</h3>
+<div class="kv">
+  <div><b>Conductors</b>Deixen passar bé el corrent. Els metalls: coure, alumini, ferro.</div>
+  <div><b>Aïllants</b>No deixen passar el corrent: fusta, plàstic, goma, vidre.</div>
+</div>
+<p>Un <b>cable</b> té <b>coure</b> a dins per conduir el corrent i una coberta de <b>plàstic</b> per aïllar-lo i que no ens doni una descàrrega.</p>
+<h3>Prova amb una pila i una bombeta</h3>
+<ul>
+  <li>Munta un circuit amb una pila, una bombeta i cables, i deixa un buit entre dues pinces.</li>
+  <li>Abans, fes una <b>predicció</b>.</li>
+  <li>Posa el material al buit: si la bombeta <b>s'encén</b> → és <b>conductor</b>. Si <b>no s'encén</b> → és <b>aïllant</b>.</li>
+  <li>Per comparar dos materials, fes servir sempre la mateixa pila i la mateixa bombeta.</li>
+</ul>
+<h3>Els efectes del corrent</h3>
+<div class="kv">
+  <div><b>Lluminós</b>Fa llum: bombeta, llanterna, pantalla del televisor o de la tauleta.</div>
+  <div><b>Calorífic</b>El material s'escalfa: planxa, torradora, radiador, forn.</div>
+  <div><b>Mecànic</b>Fa girar un motor: ventilador, robot aspirador, patinet, batedora.</div>
+  <div><b>Químic</b>Canvis químics: serveix per carregar piles i bateries.</div>
+</div>`,
+components: `
+<p>Un <b>circuit elèctric</b> és un recorregut format per diferents elements connectats entre si pels quals circula el corrent elèctric.</p>
+<div class="kv">
+  <div><b>Generador</b>Proporciona l'energia: una pila, una bateria o la xarxa elèctrica. Té dos pols (+ i −).</div>
+  <div><b>Cables</b>Condueixen el corrent per tot el circuit. Són de coure.</div>
+  <div><b>Interruptor</b>Permet connectar o desconnectar el circuit a voluntat.</div>
+  <div><b>Receptor</b>Transforma l'energia elèctrica en un efecte útil: bombeta, motor, timbre...</div>
+</div>
+<h3>Els símbols</h3>
+<div class="syms">
+  <div>${symbolSVG('battery')}Pila</div>
+  <div><svg viewBox="0 0 90 50" aria-hidden="true"><line x1="5" y1="25" x2="85" y2="25" class="wire"/></svg>Cable</div>
+  <div>${symbolSVG('bulb')}Bombeta</div>
+  <div>${symbolSVG('switch')}Interruptor</div>
+  <div>${symbolSVG('push')}Polsador</div>
+  <div>${symbolSVG('motor')}Motor elèctric</div>
+</div>
+<p>El <b>polsador</b> només tanca el circuit <b>mentre el prems</b> (com un timbre). L'<b>interruptor</b> es queda obert o tancat.</p>
+<h3>Circuit obert i circuit tancat</h3>
+<div class="pair">
+  <figure>${fig(C_OBERT, ['s'], 260)}<figcaption><b>Circuit obert</b>: el camí està tallat. El corrent no circula i la bombeta no s'encén.</figcaption></figure>
+  <figure>${circuitSVG(C_OBERT, new Set(), { width: 260, showState: true })}<figcaption><b>Circuit tancat</b>: el camí és complet. El corrent circula i la bombeta s'encén.</figcaption></figure>
+</div>
+<h3>Si no funciona: possibles avaries</h3>
+<ul>
+  <li>La <b>pila</b> està gastada.</li>
+  <li>La <b>bombeta</b> està fosa o mal enroscada.</li>
+  <li>Un <b>cable</b> està desconnectat o trencat.</li>
+  <li>L'<b>interruptor</b> està obert.</li>
+</ul>`,
+connexions: `
+<div class="pair">
+  <figure>${fig(CA, [], 300)}<figcaption><b>En sèrie</b>: els receptors comparteixen <b>un únic camí</b>. Si treus una bombeta (o es fon), el camí es talla i <b>s'apaguen totes</b>.</figcaption></figure>
+  <figure>${fig(CB, [], 300)}<figcaption><b>En paral·lel</b>: hi ha <b>branques diferents</b> entre dos punts. Si en treus una, <b>les altres continuen enceses</b>, perquè el corrent té un altre camí.</figcaption></figure>
+</div>
+<p>Per saber quin tipus és, <b>ressegueix el camí del corrent amb el dit</b> des de la pila: si només hi ha un camí, és en sèrie; si el camí es divideix en branques, és en paral·lel.</p>
+<h3>On poso l'interruptor?</h3>
+<ul>
+  <li>Dins d'una <b>branca</b> → només controla els receptors d'aquella branca.</li>
+  <li>Al <b>tram comú</b> (on hi ha la pila) → és un <b>interruptor general</b> i controla tot el circuit.</li>
+</ul>
+<figure style="margin:0">${fig(C_INT, [], 360)}</figure>
+<p>Si obres <b>I1</b>, s'apaga només la bombeta 1. Si obres el <b>General</b>, s'apaga tot.</p>
+<h3>Circuits mixtos (com a la pràctica de laboratori)</h3>
+<figure style="margin:0">${fig(MIXT, [], 400)}</figure>
+<p>La 2 i la 3 estan en paral·lel. La 1, la 4 i la 5 estan al tram comú. Si es fon la 2, la 3 continua encesa (i la 1, la 4 i la 5 també). Si es fon la 1, la 4 o la 5, s'apaguen totes.</p>
+<p>A casa, tots els aparells estan en <b>paral·lel</b>: si apagues un llum, la nevera continua funcionant.</p>`
+};
+function renderNotes(){
+  $('#toc').innerHTML = TOPICS.map(t => `<a class="chip" href="#apunts" data-to="n-${t.k}">${t.n}</a>`).join('');
+  $$('#toc .chip').forEach(c => c.addEventListener('click', e => { e.preventDefault(); const el = document.getElementById(c.dataset.to); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }));
+  $('#notes').innerHTML = TOPICS.map(t => `<section id="n-${t.k}" style="scroll-margin-top:80px"><span class="pg">${t.pg}</span><h2>${t.n}</h2>${NOTES[t.k]}<button type="button" class="btn primary practice" data-k="${t.k}">Practica aquest tema</button></section>`).join('');
+  $$('#notes .practice').forEach(b => b.addEventListener('click', () => { curTopic = b.dataset.k; try { localStorage.setItem(KEY + '-tema', curTopic); } catch (e) {} location.hash = 'exercicis'; renderTopicChips(); renderTopic(curTopic); }));
+}
+
+/* ---------- Laboratori ---------- */
+const LAB = [
+  { n:'En sèrie', spec: par([[B('b1','1'), B('b2','2')]], [BAT(), S('s','Interruptor')]),
+    repte:'Prediu: si treus la bombeta 1, què li passa a la 2? Clica-la per comprovar-ho.',
+    text:'Un sol camí. Si treus una bombeta, el camí es talla i s’apaguen totes.' },
+  { n:'En paral·lel', spec: par([[B('b1','1')], [B('b2','2')]], [BAT(), S('s','Interruptor')]),
+    repte:'Prediu: si treus la bombeta 1, què li passa a la 2?',
+    text:'Cada bombeta té la seva branca. Si en treus una, l’altra continua encesa.' },
+  { n:'Interruptors', spec: par([[S('s1','I1'), B('b1','1')], [S('s2','I2'), B('b2','2')]], [BAT(), S('sg','General')]),
+    repte:'Quin interruptor apaga només la bombeta 2? I quin les apaga totes?',
+    text:'Un interruptor dins d’una branca controla només aquella branca. L’interruptor general (al tram comú) controla tot el circuit.' },
+  { n:'Mixt (5 bombetes)', spec: MIXT,
+    repte:'Treu la bombeta 2. Quines continuen enceses? I si treus la 1, la 4 o la 5?',
+    text:'La 2 i la 3 estan en paral·lel. La 1, la 4 i la 5 estan en sèrie amb tot el circuit (tram comú).' },
+  { n:'Motor i polsador', spec: par([[B('b1','Bombeta'), M('m1','Motor')]], [BAT(), P('p','Polsador')]),
+    repte:'Clica el polsador per prémer-lo i torna a clicar per deixar-lo anar.',
+    text:'El polsador només tanca el circuit mentre el prems. La bombeta i el motor estan en sèrie.' },
+  { n:'3 bombetes + motor', spec: par([[B('b1','1')], [B('b2','2')], [B('b3','3')], [M('m1','Motor')]], [BAT(), S('s','General')]),
+    repte:'Aquest és l’exercici «Dissenya un circuit amb diverses branques». Obre l’interruptor general: què passa?',
+    text:'Tres bombetes en paral·lel, un motor a la quarta branca i un interruptor general que controla tots els receptors.' }
+];
+let labIdx = 0, labTog = new Set();
+function renderLabTabs(){
+  $('#labtabs').innerHTML = LAB.map((l, i) => `<button type="button" class="chip ${i === labIdx ? 'on' : ''}" data-i="${i}">${l.n}</button>`).join('');
+  $$('#labtabs .chip').forEach(c => c.addEventListener('click', () => { labIdx = +c.dataset.i; labTog = new Set(); renderLabTabs(); renderLab(); }));
+}
+function renderLab(){
+  const l = LAB[labIdx], st = evalCircuit(l.spec, labTog);
+  const working = l.spec.els.filter(e => (e.t === 'bulb' || e.t === 'motor') && st[e.id]);
+  const recv = l.spec.els.filter(e => e.t === 'bulb' || e.t === 'motor');
+  const nameOf = e => e.t === 'motor' ? 'el motor' : (/^\d$/.test(e.label) ? 'la bombeta ' + e.label : 'la bombeta');
+  const status = working.length === 0 ? '<div class="status off">No funciona cap receptor: el corrent no circula.</div>'
+    : working.length === recv.length ? '<div class="status on">Circuit tancat: funcionen tots els receptors.</div>'
+    : `<div class="status on">Funcionen: ${working.map(nameOf).join(', ')}.</div>`;
+  $('#lab').innerHTML = `<p class="qq">${l.repte}</p><div class="labfig" id="labfig">${circuitSVG(l.spec, labTog, { interactive: true, showState: true, width: l.spec.w })}</div>${status}<p>${l.text}</p><div><button type="button" class="btn ghost small" id="labReset">Torna a començar</button></div>`;
+  $('#labReset').addEventListener('click', () => { labTog = new Set(); renderLab(); });
+}
+function labToggle(id){ if (labTog.has(id)) labTog.delete(id); else labTog.add(id); renderLab(); }
+$('#lab').addEventListener('click', e => { const g = e.target.closest('.el.click'); if (g) labToggle(g.dataset.id); });
+$('#lab').addEventListener('keydown', e => { const g = e.target.closest('.el.click'); if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); const id = g.dataset.id; labToggle(id); const again = $('#labfig [data-id="' + id + '"]'); if (again) again.focus(); } });
+
+/* ---------- Simulacre ---------- */
+let examCards = [];
+function newExam(){
+  const pool = Q.filter(q => q.type !== 'open');
+  let pick = [];
+  TOPICS.forEach(t => { pick = pick.concat(shuffle(pool.filter(q => q.t === t.k)).slice(0, 2)); });
+  pick = shuffle(pick);
+  const box = $('#exam'); box.innerHTML = ''; $('#examResult').innerHTML = '';
+  examCards = pick.map((q, i) => { const c = makeCard(q, i + 1, true); box.appendChild(c.card); return c; });
+  $('#examBtns').innerHTML = '<button type="button" class="btn primary" id="grade">Corregeix l’examen</button><span class="hint" id="gradeMsg"></span>';
+  $('#grade').addEventListener('click', grade);
+}
+let gradeWarned = false;
+function grade(){
+  const missing = examCards.filter(c => !c.api.answered()).length;
+  if (missing && !gradeWarned) { gradeWarned = true; $('#gradeMsg').textContent = ' Et falten ' + missing + ' preguntes per respondre. Torna a prémer per corregir igualment.'; return; }
+  gradeWarned = false;
+  let total = 0;
+  examCards.forEach(c => { const s = c.api.check(); total += s; feedback(c.fb, s, c.q); if (s === 1) saveScore(c.q.id, 1); });
+  const nota = Math.round(total / examCards.length * 100) / 10;
+  const msg = nota >= 9 ? 'Excel·lent! Ho tens molt per la mà.' : nota >= 7 ? 'Molt bé! Repassa les preguntes en vermell.' : nota >= 5 ? 'Aprovat. Torna a llegir els apunts dels temes on t’has equivocat.' : 'Encara cal repassar. Llegeix els apunts i practica per temes.';
+  $('#examBtns').innerHTML = '<button type="button" class="btn primary" id="again">Fes un examen nou</button>';
+  $('#again').addEventListener('click', () => { newExam(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  $('#examResult').innerHTML = `<div class="panel result"><span class="eyebrow">La teva nota</span><span class="score">${nota.toLocaleString('ca-ES')}</span><p>${msg}</p></div>`;
+  $('#examResult').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+/* ---------- Navegació ---------- */
+const VIEWS = ['inici', 'apunts', 'exercicis', 'laboratori', 'examen'];
+function route(){
+  const h = location.hash.replace('#', '');
+  const v = VIEWS.includes(h) ? h : 'inici';
+  VIEWS.forEach(x => { $('#v-' + x).hidden = x !== v; });
+  $$('nav.tabs a').forEach(a => a.classList.toggle('on', a.dataset.v === v));
+  if (v === 'inici') renderProgress();
+  if (v === 'examen' && !examCards.length) newExam();
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', route);
+
+renderNotes(); renderTopicChips(); renderTopic(curTopic); renderLabTabs(); renderLab(); renderProgress(); route();
+})();
+</script>
+
+</body></html>
